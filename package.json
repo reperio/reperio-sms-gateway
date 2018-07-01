@@ -1,0 +1,27 @@
+{
+  "name": "reperio-sms-gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hapijs-starter": "^4.1.0",
+    "joi": "^13.4.0",
+    "jsonwebtoken": "^8.3.0",
+    "moment": "^2.22.2",
+    "moment-timezone": "^0.5.21",
+    "winston": "^2.4.3",
+    "winston-daily-rotate-file": "^1.7.2"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "coveralls": "^3.0.2",
+    "jest": "^22.4.4",
+    "sinon": "^6.0.1",
+    "sinon-chai": "^3.2.0"
+  }
+}

@@ -11,7 +11,7 @@ const plugin = {
                 return (fileName.indexOf('.') !== 0) && (fileName !== basename) && (fileName.slice(-3) === '.js');
             })
             .forEach(function(fileName) {
-                server.route(require(path.join(__dirname, fileName)));
+                server.route(require(path.join(__dirname, fileName)).routes);
             });
     }
 };

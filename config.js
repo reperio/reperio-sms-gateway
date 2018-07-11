@@ -1,7 +1,10 @@
-const env = process.env.NODE_ENV || 'development';
-
-const config_name = `config-${env}`;
-
-const config = require(`./${config_name}`);
-
-module.exports = config;
+module.exports = {
+    server: {
+        jsonSecret: process.env.SMS_SERVER_JSON_SECRET || 'secret-key'
+    },
+    kazoo: {
+        url: process.env.SMS_KAZOO_URL || '',
+        credentials: process.env.SMS_KAZOO_CREDENTIALS || '',
+        accountName: process.env.SMS_KAZOO_ACCOUNT || ''
+    }
+};

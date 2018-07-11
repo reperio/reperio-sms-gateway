@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "test-unit": "jest unit.spec.js --coverage",
+    "test-integration": "jest integration.spec.js --coverage"
   },
   "author": "",
   "license": "ISC",
@@ -12,8 +14,10 @@
     "hapijs-starter": "^4.1.0",
     "joi": "^13.4.0",
     "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.10",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
+    "request-promise-native": "^1.0.5",
     "winston": "^2.4.3",
     "winston-daily-rotate-file": "^1.7.2"
   },

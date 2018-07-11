@@ -2,10 +2,10 @@ const _ = require('lodash');
 const request = require('request-promise-native');
 
 class KazooHelper {
-    constructor(logger, crossbarConfig) {
+    constructor(logger, config) {
         this.authToken = null;
         this.logger = logger;
-        this.config = crossbarConfig;
+        this.config = config;
     }
 
     // fetches an auth token from kazoo

@@ -89,7 +89,7 @@ class KazooHelper {
             return _.find(callflow.numbers, number => {
                 return number.includes(phoneNumber);
             });
-        });
+        }) || null;
     }
 
     // finds user associated with phone number

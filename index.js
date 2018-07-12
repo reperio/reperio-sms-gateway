@@ -8,7 +8,7 @@ const start = async () => {
     try {
         //status monitor is turned off due to dependency issue with the pidusage dependency on the master branch of hapijs-status-monitor
         const reperio_server = new ReperioServer({
-            statusMonitor: true,
+            statusMonitor: false,
             cors: true,
             corsOrigins: ['*'],
             authEnabled: true,

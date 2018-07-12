@@ -6,7 +6,7 @@ const KazooHelper = require('../../helpers/kazooHelper');
 
 describe('Kazoo integration tests', function() {
     beforeAll(() => {
-        const logger = new Logger();
+        const logger = new Logger(false);
         this.kazooHelper = new KazooHelper(logger, config);
     });
 
@@ -22,7 +22,7 @@ describe('Kazoo integration tests', function() {
     });
 
     it('Fetches correct user from kazoo', async () => {
-        const result = await this.kazooHelper.getUserByPhoneNumber('+15138184652');
-        expect(result.id).toBe('7ca11798c555ffb329b0e16827a733e2');
+        const result = await this.kazooHelper.getUserByPhoneNumber('fakeId', '+15138184658');
+        expect(result.id).toBe('9449e0a2eae911458e10ebf5bdca37c7');
     });
 });

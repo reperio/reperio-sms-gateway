@@ -2,10 +2,29 @@ const Joi = require('joi');
 
 const handlers = {
     telnyxIncoming: async (request, h) => {
-        request.server.app.logger.info(`${request.info.id} - recieved Telnyx incoming SMS`);
-        request.server.app.logger.debug(`${request.info.id} - ${JSON.stringify(request.payload)}`);
+        try {
+            const logger = request.server.app.logger;
+            const kazooHelper = await request.app.getNewKazooHelper();
+            const emailHelper = await request.app.getNewEmailHelper();
 
-        return '';
+            const messageDetails = request.payload;
+
+            logger.info(`${request.info.id} - recieved Telnyx incoming SMS`);
+            logger.debug(`${request.info.id} - ${JSON.stringify(request.payload)}`);
+
+            logger.info(`${request.info.id} - searching for user with phone number: ${messageDetails.to}`);
+            const user = await kazooHelper.getUserByPhoneNumber(request.info.id, messageDetails.to);
+            logger.debug(`${request.info.id} - ${JSON.stringify(user)}`);
+
+            logger.info(`${request.info.id} - sending email to user: ${user.id}`);
+            await emailHelper.sendEmail(messageDetails.body, messageDetails.from, user.email);
+            logger.info(`${request.info.id} - email sent`);
+            return '';
+        } catch (err) {
+            this.logger.error(`${request.info.id} - failed to process telnyx SMS event`);
+            this.logger.error(`${request.info.id} - ${err}`);
+            return '';
+        }
     }
 };
 

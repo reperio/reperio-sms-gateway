@@ -18,6 +18,8 @@ const handlers = {
 
             logger.info(`${request.info.id} - sending email to user: ${user.id}`);
             await emailHelper.sendEmail(messageDetails.text, messageDetails.from, user.email);
+            logger.info(`${request.info.id} - email sent`);
+            
             return '';
         } catch (err) {
             this.logger.error(`${request.info.id} - failed to process bandwith SMS event`);

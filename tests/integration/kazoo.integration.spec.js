@@ -25,4 +25,9 @@ describe('Kazoo integration tests', function() {
         const result = await this.kazooHelper.getUserByPhoneNumber('fakeId', '+15138184658');
         expect(result.id).toBe('9449e0a2eae911458e10ebf5bdca37c7');
     });
+
+    it('getUserByPhoneNumber returns null if owner_id doesn\'t exist in callflow', async () => {
+        const result = await this.kazooHelper.getUserByPhoneNumber('fakeId', '+15138184650');
+        expect(result).toBe(null);
+    });
 });

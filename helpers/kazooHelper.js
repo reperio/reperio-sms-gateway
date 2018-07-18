@@ -27,7 +27,6 @@ class KazooHelper {
         };
 
         const result = await request(options);
-        this.logger.debug(JSON.stringify(result));
         this.authToken = result.auth_token;
     }
 
@@ -48,9 +47,57 @@ class KazooHelper {
         return result.data.account_id;
     }
 
+    // get account details by account id from kazoo
+    async getAccountById(accountId) {
+        const url = `${this.config.kazoo.url}/v2/accounts/${accountId}`;
+        const options = {
+            uri: url,
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Auth-Token': this.authToken
+            }
+        };
+
+        const result = JSON.parse(await request(options));
+        return result.data;
+    }
+
+    async updateAccountById(accountId, body) {
+        const url = `${this.config.kazoo.url}/v2/accounts/${accountId}`;
+        const options = {
+            uri: url,
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Auth-Token': this.authToken
+            },
+            json: body
+        };
+
+        const result = JSON.parse(await request(options));
+        return result.data;
+    }
+
     // get callflows for an account from kazoo
     async getCallFlowsByAccountId(accountId) {
         const url = `${this.config.kazoo.url}/v2/accounts/${accountId}/callflows`;
+        const options = {
+            uri: url,
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Auth-Token': this.authToken
+            }
+        };
+
+        const result = JSON.parse(await request(options));
+        return result.data;
+    }
+
+    // fetches all users by account id from kazoo
+    async getUsersByAccountId(accountId) {
+        const url = `${this.config.kazoo.url}/v2/accounts/${accountId}/users`;
         const options = {
             uri: url,
             method: 'GET',
@@ -77,6 +124,22 @@ class KazooHelper {
         };
 
         const result = JSON.parse(await request(options));
+        return result.data;
+    }
+
+    async updateUserByAccountAndId(accountId, userId, body) {
+        const url = `${this.config.kazoo.url}/v2/accounts/${accountId}/users/${userId}`;
+        const options = {
+            uri: url,
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Auth-Token': this.authToken
+            },
+            json: body
+        };
+
+        const result = await request(options);
         return result.data;
     }
 

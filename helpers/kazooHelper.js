@@ -75,7 +75,7 @@ class KazooHelper {
             json: body
         };
 
-        const result = JSON.parse(await request(options));
+        const result = await request(options);
         return result.data;
     }
 

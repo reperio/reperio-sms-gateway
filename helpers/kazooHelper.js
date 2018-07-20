@@ -30,8 +30,8 @@ class KazooHelper {
         this.authToken = result.auth_token;
     }
 
-    // get account details for phone number from kazoo
-    async getAccountByPhoneNumber(phoneNumber) {
+    // get account id for phone number from kazoo
+    async getAccountIdByPhoneNumber(phoneNumber) {
         const formattedNumber = phoneNumber.replace('+', '');
         const url = `${this.config.kazoo.url}/v2/phone_numbers/${formattedNumber}/identify`;
         const options = {
@@ -63,6 +63,7 @@ class KazooHelper {
         return result.data;
     }
 
+    // updates account record with provided data
     async updateAccountById(accountId, body) {
         const url = `${this.config.kazoo.url}/v2/accounts/${accountId}`;
         const options = {
@@ -127,6 +128,7 @@ class KazooHelper {
         return result.data;
     }
 
+    // updates user record with provided data
     async updateUserByAccountAndId(accountId, userId, body) {
         const url = `${this.config.kazoo.url}/v2/accounts/${accountId}/users/${userId}`;
         const options = {
@@ -157,9 +159,9 @@ class KazooHelper {
         try {
             await this.getAuthToken();
 
-            // get the account on the phone number
-            this.logger.info(`${requestId} - fetching account for phone number: ${phoneNumber}`);
-            const accountId = await this.getAccountByPhoneNumber(phoneNumber);
+            // get the account id on the phone number
+            this.logger.info(`${requestId} - fetching account id for phone number: ${phoneNumber}`);
+            const accountId = await this.getAccountIdByPhoneNumber(phoneNumber);
 
             // fetch the callflows for that account
             this.logger.info(`${requestId} - fetching call flows for account: ${accountId}`);

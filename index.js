@@ -1,6 +1,7 @@
 const ReperioServer = require('hapijs-starter');
 const API = require('./api');
 const config = require('./config');
+const BandwidthHelper = require('./helpers/bandwidthHelper');
 const EmailHelper = require('./helpers/emailHelper');
 const KazooHelper = require('./helpers/kazooHelper');
 
@@ -42,6 +43,17 @@ const start = async () => {
             method: async (request, h) => {
                 request.app.getNewEmailHelper = async () => {
                     return new EmailHelper(reperio_server.app.logger, reperio_server.app.config);
+                };
+    
+                return h.continue;
+            }
+        });
+
+        await reperio_server.registerExtension({
+            type: 'onRequest',
+            method: async (request, h) => {
+                request.app.getNewBandwidthHelper = async () => {
+                    return new BandwidthHelper(reperio_server.app.logger, reperio_server.app.config);
                 };
     
                 return h.continue;

@@ -17,6 +17,7 @@ class EmailHelper {
             html: message
         };
 
+        this.logger.debug(msg);
         await sgMail.send(msg);
     }
 }

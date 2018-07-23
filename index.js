@@ -4,6 +4,7 @@ const config = require('./config');
 const BandwidthHelper = require('./helpers/bandwidthHelper');
 const EmailHelper = require('./helpers/emailHelper');
 const KazooHelper = require('./helpers/kazooHelper');
+const LoggingHelper = require('./helpers/loggingHelper');
 const TelnyxHelper = require('./helpers/telnyxHelper');
 const UtilityHelper = require('./helpers/utilityHelper');
 
@@ -29,24 +30,12 @@ const start = async () => {
 
         reperio_server.app.config = config;
 
+        // add a logger to the request that automagically prepends the request id to the message
         await reperio_server.registerExtension({
-            type: 'onRequest',
+            type: 'onPostAuth',
             method: async (request, h) => {
-                request.app.getNewKazooHelper = async () => {
-                    return new KazooHelper(reperio_server.app.logger, reperio_server.app.config);
-                };
-    
-                return h.continue;
-            }
-        });
+                request.app.logger = new LoggingHelper(reperio_server.app.logger, request.info.id);
 
-        await reperio_server.registerExtension({
-            type: 'onRequest',
-            method: async (request, h) => {
-                request.app.getNewEmailHelper = async () => {
-                    return new EmailHelper(reperio_server.app.logger, reperio_server.app.config);
-                };
-    
                 return h.continue;
             }
         });
@@ -55,31 +44,25 @@ const start = async () => {
             type: 'onRequest',
             method: async (request, h) => {
                 request.app.getNewBandwidthHelper = async () => {
-                    return new BandwidthHelper(reperio_server.app.logger, reperio_server.app.config);
+                    return new BandwidthHelper(request.app.logger, reperio_server.app.config);
                 };
-    
-                return h.continue;
-            }
-        });
+                
+                request.app.getNewEmailHelper = async () => {
+                    return new EmailHelper(request.app.logger, reperio_server.app.config);
+                };
 
-        await reperio_server.registerExtension({
-            type: 'onRequest',
-            method: async (request, h) => {
+                request.app.getNewKazooHelper = async () => {
+                    return new KazooHelper(request.app.logger, reperio_server.app.config);
+                };
+
                 request.app.getNewTelnyxHelper = async () => {
-                    return new TelnyxHelper(reperio_server.app.logger, reperio_server.app.config);
+                    return new TelnyxHelper(request.app.logger, reperio_server.app.config);
                 };
-    
-                return h.continue;
-            }
-        });
 
-        await reperio_server.registerExtension({
-            type: 'onRequest',
-            method: async (request, h) => {
                 request.app.getNewUtilityHelper = async () => {
-                    return new UtilityHelper(reperio_server.app.logger, reperio_server.app.config);
+                    return new UtilityHelper(request.app.logger, reperio_server.app.config);
                 };
-    
+                
                 return h.continue;
             }
         });

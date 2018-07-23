@@ -18,5 +18,9 @@ module.exports = {
         authUsername: process.env.SMS_BANDWIDTH_AUTH_USERNAME || '',
         authPassword: process.env.SMS_BANDWIDTH_AUTH_PASSWORD || ''
     },
+    telnyx: {
+        url: process.env.SMS_TELNYX_URL || 'https://sms.telnyx.com',
+        profileSecret: process.env.SMS_TELNYX_PROFILE_SECRET || ''
+    },
     phoneNumberRegex: process.env.SMS_PHONE_NUMBER_REGEX || '^\\+1\\d{10}'
 };

@@ -17,7 +17,7 @@ describe('Kazoo integration tests', function() {
     });
 
     it('Can get account id with phone number', async () => {
-        const result = await this.kazooHelper.getAccountByPhoneNumber('5138184651');
+        const result = await this.kazooHelper.getAccountIdByPhoneNumber('5138184651');
         expect(result).toBe('d38abe802090d3216dff4993fd5ee186');
     });
 

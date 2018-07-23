@@ -7,6 +7,7 @@ const handlers = {
             const kazooHelper = await request.app.getNewKazooHelper();
             const emailHelper = await request.app.getNewEmailHelper();
             const bandwidthHelper = await request.app.getNewBandwidthHelper();
+            const utilityHelper = await request.app.getNewUtilityHelper();
 
             const messageDetails = request.payload;
 
@@ -33,11 +34,13 @@ const handlers = {
             await emailHelper.sendEmail(messageDetails.text, messageDetails.from, user.email);
             logger.info(`${request.info.id} - email sent`);
 
-            // send reply message to originating number with response text from the kazoo user record
-            logger.info(`${request.info.id} - sending reply sms to ${messageDetails.from} with text "${user.sms_response_text}"`);
-            await bandwidthHelper.sendTextMessage(messageDetails.from, messageDetails.to, user.sms_response_text, request.info.id);
-            logger.info(`${request.info.id} - sms reply sent`);
-
+            // check to make sure the originating number is one we want to reply to
+            if (utilityHelper.shouldReplyToNumber(messageDetails.from)) {
+                // send reply message to originating number with response text from the kazoo user record
+                logger.info(`${request.info.id} - sending reply sms to ${messageDetails.from} with text "${user.sms_response_text}"`);
+                await bandwidthHelper.sendTextMessage(messageDetails.from, messageDetails.to, user.sms_response_text, request.info.id);
+                logger.info(`${request.info.id} - sms reply sent`);
+            }
             return '';
         } catch (err) {
             logger.error(`${request.info.id} - failed to process bandwith SMS event`);

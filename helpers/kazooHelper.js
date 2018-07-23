@@ -190,11 +190,12 @@ class KazooHelper {
             const callflow = await this.findCallflowForNumber(callflows, phoneNumber);
 
             // verify that we found a callflow with the given phone number
-            if (callflow === null || callflow.owner_id === null) {
+            if (callflow === null || callflow.owner_id === null || typeof callflow.owner_id === 'undefined') {
                 this.logger.warn(`${requestId} - no callflows contained phone number: ${phoneNumber} or an owner_id in account: ${account.id}`);
                 this.logger.debug(`${requestId} - callflows: ${JSON.stringify(callflows)}`);
                 return {
-                    account: account
+                    account: account,
+                    user: null
                 };
             }
 

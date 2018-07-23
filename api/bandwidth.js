@@ -36,6 +36,8 @@ const handlers = {
                 notificationEmailAddress = accountAndUser.user.email;
             } else if (accountAndUser.account && accountAndUser.account.sms_contact_email) {
                 notificationEmailAddress = accountAndUser.account.sms_contact_email;
+            } else {
+                notificationEmailAddress = null;
             }
 
             if (notificationEmailAddress) {
@@ -51,9 +53,17 @@ const handlers = {
                 replyText = accountAndUser.user.sms_response_text;
             } else if (accountAndUser.account && accountAndUser.account.sms_response_text) {
                 replyText = accountAndUser.account.sms_response_text;
+            } else {
+                replyText = null;
             }
 
-            if (replyText && utilityHelper.shouldReplyToNumber(messageDetails.from)) {
+            if (!utilityHelper.shouldReplyToNumber(messageDetails.from)) {
+                logger.warn(`${request.info.id} - originating number failed regex check, skipping sms reply`);
+                return '';
+            }
+            logger.info(`${request.info.id} - originating number passed regex check`);
+
+            if (replyText) {
                 // send reply message to originating number with response text from the kazoo user record
                 logger.info(`${request.info.id} - sending reply sms to ${messageDetails.from} with text "${replyText}"`);
                 await bandwidthHelper.sendTextMessage(messageDetails.from, messageDetails.to, replyText, request.info.id);
@@ -61,7 +71,7 @@ const handlers = {
             } else {
                 logger.warn(`${request.info.id} - could not find response text, reply sms not sent`);
             }
-            
+
             return '';
         } catch (err) {
             logger.error(`${request.info.id} - failed to process bandwith SMS event`);

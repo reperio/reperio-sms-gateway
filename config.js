@@ -17,5 +17,6 @@ module.exports = {
         userId: process.env.SMS_BANDWIDTH_USER_ID || '',
         authUsername: process.env.SMS_BANDWIDTH_AUTH_USERNAME || '',
         authPassword: process.env.SMS_BANDWIDTH_AUTH_PASSWORD || ''
-    }
+    },
+    phoneNumberRegex: process.env.SMS_PHONE_NUMBER_REGEX || '^\\+1\\d{10}'
 };

@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage",
-    "test-unit": "jest unit.spec.js --coverage",
-    "test-integration": "jest integration.spec.js --coverage"
+    "test": "jest --coverage --verbose",
+    "test-unit": "jest unit.spec.js --coverage --verbose",
+    "test-integration": "jest integration.spec.js --coverage --verbose"
   },
   "author": "",
   "license": "ISC",

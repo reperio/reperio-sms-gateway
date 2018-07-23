@@ -4,6 +4,7 @@ const config = require('./config');
 const BandwidthHelper = require('./helpers/bandwidthHelper');
 const EmailHelper = require('./helpers/emailHelper');
 const KazooHelper = require('./helpers/kazooHelper');
+const TelnyxHelper = require('./helpers/telnyxHelper');
 const UtilityHelper = require('./helpers/utilityHelper');
 
 const start = async () => {
@@ -55,6 +56,17 @@ const start = async () => {
             method: async (request, h) => {
                 request.app.getNewBandwidthHelper = async () => {
                     return new BandwidthHelper(reperio_server.app.logger, reperio_server.app.config);
+                };
+    
+                return h.continue;
+            }
+        });
+
+        await reperio_server.registerExtension({
+            type: 'onRequest',
+            method: async (request, h) => {
+                request.app.getNewTelnyxHelper = async () => {
+                    return new TelnyxHelper(reperio_server.app.logger, reperio_server.app.config);
                 };
     
                 return h.continue;

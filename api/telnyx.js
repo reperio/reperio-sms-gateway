@@ -6,7 +6,7 @@ const handlers = {
         try {
             const kazooHelper = await request.app.getNewKazooHelper();
             const emailHelper = await request.app.getNewEmailHelper();
-            const bandwidthHelper = await request.app.getNewBandwidthHelper();
+            const telnyxHelper = await request.app.getNewTelnyxHelper();
             const utilityHelper = await request.app.getNewUtilityHelper();
 
             const messageDetails = request.payload;
@@ -61,7 +61,7 @@ const handlers = {
             if (replyText) {
                 // send reply message to originating number with response text from the kazoo user record
                 logger.info(`${request.info.id} - sending reply sms to ${messageDetails.from} with text "${replyText}"`);
-                await bandwidthHelper.sendTextMessage(messageDetails.from, messageDetails.to, replyText, request.info.id);
+                await telnyxHelper.sendTextMessage(messageDetails.from, messageDetails.to, replyText, request.info.id);
                 logger.info(`${request.info.id} - sms reply sent`);
             } else {
                 logger.warn(`${request.info.id} - could not find response text, reply sms not sent`);
@@ -73,6 +73,15 @@ const handlers = {
             logger.error(`${request.info.id} - ${err}`);
             return '';
         }
+    },
+    telnyxOutgoing: async (request, h) => {
+        const logger = request.server.app.logger;
+        const messageDetails = request.payload;
+        const requestId = request.params.requestId || request.info.id;
+
+        logger.info(`${requestId} - Recieved Telnyx outgoing SMS receipt: ${JSON.stringify(messageDetails)}`);
+
+        return '';
     }
 };
 
@@ -98,6 +107,36 @@ const routes = [
             }
         },
         handler: handlers.telnyxIncoming
+    }, {
+        method: 'POST',
+        path: '/telnyx/outgoing/{requestId}',
+        config: {
+            auth: false,
+            validate: {
+                payload: {
+                    sms_id: Joi.string().guid(),
+                    gw_sms_id: Joi.string(),
+                    user_id: Joi.string(),
+                    profile_id: Joi.string().guid(),
+                    status: Joi.string(),
+                    delivery_status: Joi.string(),
+                    msg: Joi.object({
+                        src: Joi.string(),
+                        dst: Joi.string(),
+                        body: Joi.string()
+                    }),
+                    coding: Joi.number(),
+                    parts: Joi.number(),
+                    created: Joi.number(),
+                    updated: Joi.number(),
+                    date_created: Joi.date(),
+                    date_updated: Joi.date(),
+                    delivery_status_webhook_url: Joi.string(),
+                    delivery_status_failover_url: Joi.string()
+                }
+            }
+        },
+        handler: handlers.telnyxOutgoing
     }
 ];
 

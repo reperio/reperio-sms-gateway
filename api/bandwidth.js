@@ -21,26 +21,47 @@ const handlers = {
 
             // get user attached to phone number
             logger.info(`${request.info.id} - searching for user with phone number: ${messageDetails.to}`);
-            const user = await kazooHelper.getUserByPhoneNumber(request.info.id, messageDetails.to);
-            logger.debug(`${request.info.id} - ${JSON.stringify(user)}`);
+            const accountAndUser = await kazooHelper.getUserByPhoneNumber(request.info.id, messageDetails.to);
+            logger.debug(`${request.info.id} - ${JSON.stringify(accountAndUser)}`);
 
-            if (user === null) {
-                logger.warn(`${request.info.id} - couldn't find user for number: ${messageDetails.to}`);
+            let notificationEmailAddress = '';
+            let replyText = '';
+
+            if (accountAndUser === null) {
+                logger.warn(`${request.info.id} - couldn't find account or user for number: ${messageDetails.to}`);
                 return '';
             }
 
-            // send email to user with message contents
-            logger.info(`${request.info.id} - sending email to ${user.email}`);
-            await emailHelper.sendEmail(messageDetails.text, messageDetails.from, user.email);
-            logger.info(`${request.info.id} - email sent`);
-
-            // check to make sure the originating number is one we want to reply to
-            if (utilityHelper.shouldReplyToNumber(messageDetails.from)) {
-                // send reply message to originating number with response text from the kazoo user record
-                logger.info(`${request.info.id} - sending reply sms to ${messageDetails.from} with text "${user.sms_response_text}"`);
-                await bandwidthHelper.sendTextMessage(messageDetails.from, messageDetails.to, user.sms_response_text, request.info.id);
-                logger.info(`${request.info.id} - sms reply sent`);
+            if (accountAndUser.user && accountAndUser.user.email) {
+                notificationEmailAddress = accountAndUser.user.email;
+            } else if (accountAndUser.account && accountAndUser.account.sms_contact_email) {
+                notificationEmailAddress = accountAndUser.account.sms_contact_email;
             }
+
+            if (notificationEmailAddress) {
+                // send email to user with message contents
+                logger.info(`${request.info.id} - sending email to ${notificationEmailAddress}`);
+                await emailHelper.sendEmail(messageDetails.text, messageDetails.from, notificationEmailAddress);
+                logger.info(`${request.info.id} - email sent`);
+            } else {
+                logger.warn(`${request.info.id} - could not find email address, notification email not sent`);
+            }
+
+            if (accountAndUser.user && accountAndUser.user.sms_response_text) {
+                replyText = accountAndUser.user.sms_response_text;
+            } else if (accountAndUser.account && accountAndUser.account.sms_response_text) {
+                replyText = accountAndUser.account.sms_response_text;
+            }
+
+            if (replyText && utilityHelper.shouldReplyToNumber(messageDetails.from)) {
+                // send reply message to originating number with response text from the kazoo user record
+                logger.info(`${request.info.id} - sending reply sms to ${messageDetails.from} with text "${replyText}"`);
+                await bandwidthHelper.sendTextMessage(messageDetails.from, messageDetails.to, replyText, request.info.id);
+                logger.info(`${request.info.id} - sms reply sent`);
+            } else {
+                logger.warn(`${request.info.id} - could not find response text, reply sms not sent`);
+            }
+            
             return '';
         } catch (err) {
             logger.error(`${request.info.id} - failed to process bandwith SMS event`);

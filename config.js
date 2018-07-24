@@ -3,13 +3,14 @@ module.exports = {
         jsonSecret: process.env.SMS_SERVER_JSON_SECRET || 'secret-key',
         url: process.env.SMS_SERVER_URL || ''
     },
-    smtp: {
-        host: process.env.SMS_SMTP_HOST || 'localhost',
-        port: process.env.SMS_SMTP_PORT || 25,
-        user: process.env.SMS_SMTP_USER || '',
-        password: process.env.SMS_SMTP_USER_PASSWORD || '',
-        senderAddress: process.env.SMS_SMTP_SENDER_ADDRESS || '',
-        senderName: process.env.SMS_SMTP_SENDER_NAME || ''
+    email: {
+        smtpHost: process.env.SMS_SMTP_HOST || 'localhost',
+        smtpPort: process.env.SMS_SMTP_PORT || 25,
+        smtpUser: process.env.SMS_SMTP_USER || '',
+        smtpPassword: process.env.SMS_SMTP_USER_PASSWORD || '',
+        sender: process.env.SMS_EMAIL_SENDER || 'do-not-reply@reper.io',
+        sendGridApiKey: process.env.SMS_SENDGRID_API_KEY || '',
+        method: process.env.SMS_EMAIL_METHOD || 'smtp' // must be either 'smtp' or 'sendgrid'
     },
     kazoo: {
         url: process.env.SMS_KAZOO_URL || '',

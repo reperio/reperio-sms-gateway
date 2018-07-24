@@ -29,6 +29,7 @@ class BandwidthHelper {
             json: body
         };
 
+        this.logger.debug(options);
         const result = await request(options);
         return result;
     }

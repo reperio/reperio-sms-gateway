@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 const handlers = {
     bandwidthIncoming: async (request, h) => {
-        const logger = request.server.app.logger;
+        const logger = request.app.logger;
         try {
             const kazooHelper = await request.app.getNewKazooHelper();
             const emailHelper = await request.app.getNewEmailHelper();
@@ -16,19 +16,19 @@ const handlers = {
                 return '';
             }
 
-            logger.info(`${request.info.id} - recieved Bandwidth incoming SMS`);
-            logger.debug(`${request.info.id} - ${JSON.stringify(request.payload)}`);
+            logger.info('recieved Bandwidth incoming SMS');
+            logger.debug(request.payload);
 
             // get user attached to phone number
-            logger.info(`${request.info.id} - searching for user with phone number: ${messageDetails.to}`);
-            const accountAndUser = await kazooHelper.getUserByPhoneNumber(request.info.id, messageDetails.to);
-            logger.debug(`${request.info.id} - ${JSON.stringify(accountAndUser)}`);
+            logger.info(`searching for user with phone number: ${messageDetails.to}`);
+            const accountAndUser = await kazooHelper.getUserByPhoneNumber(messageDetails.to);
+            logger.debug(accountAndUser);
 
             let notificationEmailAddress = '';
             let replyText = '';
 
             if (accountAndUser === null) {
-                logger.warn(`${request.info.id} - couldn't find account or user for number: ${messageDetails.to}`);
+                logger.warn(`couldn't find account or user for number: ${messageDetails.to}`);
                 return '';
             }
 
@@ -42,11 +42,11 @@ const handlers = {
 
             if (notificationEmailAddress) {
                 // send email to user with message contents
-                logger.info(`${request.info.id} - sending email to ${notificationEmailAddress}`);
+                logger.info(`sending email to ${notificationEmailAddress}`);
                 await emailHelper.sendEmail(messageDetails.text, messageDetails.from, notificationEmailAddress);
-                logger.info(`${request.info.id} - email sent`);
+                logger.info('email sent');
             } else {
-                logger.warn(`${request.info.id} - could not find email address, notification email not sent`);
+                logger.warn('could not find email address, notification email not sent');
             }
 
             if (accountAndUser.user && accountAndUser.user.sms_response_text) {
@@ -58,33 +58,34 @@ const handlers = {
             }
 
             if (!utilityHelper.shouldReplyToNumber(messageDetails.from)) {
-                logger.warn(`${request.info.id} - originating number failed regex check, skipping sms reply`);
+                logger.warn('originating number failed regex check, skipping sms reply');
                 return '';
             }
-            logger.info(`${request.info.id} - originating number passed regex check`);
+            logger.info('originating number passed regex check');
 
             if (replyText) {
                 // send reply message to originating number with response text from the kazoo user record
-                logger.info(`${request.info.id} - sending reply sms to ${messageDetails.from} with text "${replyText}"`);
+                logger.info(`sending reply sms to ${messageDetails.from} with text "${replyText}"`);
                 await bandwidthHelper.sendTextMessage(messageDetails.from, messageDetails.to, replyText, request.info.id);
-                logger.info(`${request.info.id} - sms reply sent`);
+                logger.info('sms reply sent');
             } else {
-                logger.warn(`${request.info.id} - could not find response text, reply sms not sent`);
+                logger.warn('could not find response text, reply sms not sent');
             }
 
             return '';
         } catch (err) {
-            logger.error(`${request.info.id} - failed to process bandwith SMS event`);
-            logger.error(`${request.info.id} - ${err}`);
+            logger.error('failed to process bandwith SMS event');
+            logger.error(err);
             return '';
         }
     },
     bandwidthOutgoing: async (request, h) => {
-        const logger = request.server.app.logger;
+        const logger = request.app.logger;
         const messageDetails = request.payload;
         const requestId = request.params.requestId || request.info.id;
 
-        logger.info(`${requestId} - Recieved Bandwidth outgoing SMS receipt: ${JSON.stringify(messageDetails)}`);
+        logger.setRequestId(requestId);
+        logger.info(`Recieved Bandwidth outgoing SMS receipt: ${JSON.stringify(messageDetails)}`);
 
         return '';
     }

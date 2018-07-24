@@ -26,6 +26,7 @@ class KazooHelper {
             json: payload
         };
 
+        this.logger.debug(options);
         const result = await request(options);
         this.authToken = result.auth_token;
     }
@@ -43,6 +44,7 @@ class KazooHelper {
             }
         };
 
+        this.logger.debug(options);
         const result = JSON.parse(await request(options));
         return result.data.account_id;
     }
@@ -59,6 +61,7 @@ class KazooHelper {
             }
         };
 
+        this.logger.debug(options);
         const result = JSON.parse(await request(options));
         return result.data;
     }
@@ -75,7 +78,8 @@ class KazooHelper {
             },
             json: body
         };
-
+        
+        this.logger.debug(options);
         const result = await request(options);
         return result.data;
     }
@@ -92,6 +96,7 @@ class KazooHelper {
             }
         };
 
+        this.logger.debug(options);
         const result = JSON.parse(await request(options));
         return result.data;
     }
@@ -108,6 +113,7 @@ class KazooHelper {
             }
         };
 
+        this.logger.debug(options);
         const result = JSON.parse(await request(options));
         return result.data;
     }
@@ -124,6 +130,7 @@ class KazooHelper {
             }
         };
 
+        this.logger.debug(options);
         const result = JSON.parse(await request(options));
         return result.data;
     }
@@ -141,6 +148,7 @@ class KazooHelper {
             json: body
         };
 
+        this.logger.debug(options);
         const result = await request(options);
         return result.data;
     }
@@ -155,44 +163,44 @@ class KazooHelper {
     }
 
     // finds account associated with phone number
-    async getAccountByPhoneNumber(requestId, phoneNumber) {
+    async getAccountByPhoneNumber(phoneNumber) {
         try {
             await this.getAuthToken();
 
             // get the account id on the phone number
-            this.logger.info(`${requestId} - fetching account id for phone number: ${phoneNumber}`);
+            this.logger.info(`fetching account id for phone number: ${phoneNumber}`);
             const accountId = await this.getAccountIdByPhoneNumber(phoneNumber);
 
             // get the account using the account id
-            this.logger.info(`${requestId} - fetchin account with id: ${accountId}`);
+            this.logger.info(`fetching account with id: ${accountId}`);
             const account = await this.getAccountById(accountId);
 
             return account;
         } catch (err) {
-            this.logger.error(`${requestId} - failed to find an account for the phone number: ${phoneNumber}`);
-            this.logger.error(`${requestId} - ${err}`);
+            this.logger.error(`failed to find an account for the phone number: ${phoneNumber}`);
+            this.logger.error(err);
             throw err;
         }
     }
 
     // finds user associated with phone number
-    async getUserByPhoneNumber(requestId, phoneNumber) {
+    async getUserByPhoneNumber(phoneNumber) {
         try {
             // get the account record associated with the phone number
-            const account = await this.getAccountByPhoneNumber(requestId, phoneNumber);
+            const account = await this.getAccountByPhoneNumber(phoneNumber);
 
             // fetch the callflows for that account
-            this.logger.info(`${requestId} - fetching call flows for account: ${account.id}`);
+            this.logger.info(`fetching call flows for account: ${account.id}`);
             const callflows = await this.getCallFlowsByAccountId(account.id);
         
             // find the callflow with that phone number
-            this.logger.info(`${requestId} - checking callflows for phone number: ${phoneNumber}`);
+            this.logger.info(`checking callflows for phone number: ${phoneNumber}`);
             const callflow = await this.findCallflowForNumber(callflows, phoneNumber);
 
             // verify that we found a callflow with the given phone number
             if (callflow === null || callflow.owner_id === null || typeof callflow.owner_id === 'undefined') {
-                this.logger.warn(`${requestId} - no callflows contained phone number: ${phoneNumber} or an owner_id in account: ${account.id}`);
-                this.logger.debug(`${requestId} - callflows: ${JSON.stringify(callflows)}`);
+                this.logger.warn(`no callflows contained phone number: ${phoneNumber} or an owner_id in account: ${account.id}`);
+                this.logger.debug(`callflows: ${JSON.stringify(callflows)}`);
                 return {
                     account: account,
                     user: null
@@ -200,7 +208,7 @@ class KazooHelper {
             }
 
             // fetch user with account and owner ids
-            this.logger.info(`${requestId} - fetching user with account id: ${account.id} and id: ${callflow.owner_id}`);
+            this.logger.info(`fetching user with account id: ${account.id} and id: ${callflow.owner_id}`);
             const user = await this.getUserByAccountAndId(account.id, callflow.owner_id);
 
             return {
@@ -208,8 +216,8 @@ class KazooHelper {
                 user: user
             };
         } catch (err) {
-            this.logger.error(`${requestId} - failed to find a user with the phone number: ${phoneNumber}`);
-            this.logger.error(`${requestId} - ${err}`);
+            this.logger.error(`failed to find a user with the phone number: ${phoneNumber}`);
+            this.logger.error(err);
             return null;
         }
     }

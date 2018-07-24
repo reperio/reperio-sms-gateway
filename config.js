@@ -4,8 +4,8 @@ module.exports = {
         url: process.env.SMS_SERVER_URL || ''
     },
     smtp: {
-        host: process.env.SMS_SMTP_HOST || '',
-        port: process.env.SMS_SMTP_PORT || 465,
+        host: process.env.SMS_SMTP_HOST || 'localhost',
+        port: process.env.SMS_SMTP_PORT || 25,
         user: process.env.SMS_SMTP_USER || '',
         password: process.env.SMS_SMTP_USER_PASSWORD || '',
         senderAddress: process.env.SMS_SMTP_SENDER_ADDRESS || '',

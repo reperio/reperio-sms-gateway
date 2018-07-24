@@ -1,24 +1,38 @@
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
 
 class EmailHelper {
     constructor(logger, config) {
         this.logger = logger;
         this.config = config;
 
-        sgMail.setApiKey(this.config.sendgrid.apiKey);
+        // create transporter object
+        this.transporter = nodemailer.createTransport({
+            host: this.config.smtp.host,
+            port: this.config.smtp.port,
+            secure: this.config.smtp.port === 465 ? true : false, // true for 465, false for other ports
+            auth: {
+                user: this.config.smtp.user,
+                pass: this.config.smtp.password
+            }
+        });
     }
 
     async sendEmail(message, from, email) {
-        const msg = {
+        // setup email data with unicode symbols
+        let mailOptions = {
+            from: `${this.config.smtp.senderName} <${this.config.smtp.senderAddress}>`,
             to: email,
-            from: this.config.sendgrid.from,
             subject: `New message from ${from}`,
             text: message,
             html: message
         };
-
-        this.logger.debug(msg);
-        await sgMail.send(msg);
+    
+        // send mail with defined transport object
+        this.transporter.sendMail(mailOptions, (error) => {
+            if (error) {
+                this.logger.error(error);
+            }
+        });
     }
 }
 

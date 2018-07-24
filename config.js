@@ -10,7 +10,8 @@ module.exports = {
         smtpPassword: process.env.SMS_SMTP_USER_PASSWORD || '',
         sender: process.env.SMS_EMAIL_SENDER || 'do-not-reply@reper.io',
         sendGridApiKey: process.env.SMS_SENDGRID_API_KEY || '',
-        method: process.env.SMS_EMAIL_METHOD || 'smtp' // must be either 'smtp' or 'sendgrid'
+        method: process.env.SMS_EMAIL_METHOD || 'smtp', // must be either 'smtp' or 'sendgrid',
+        rejectUnauthorizedTLS: process.env.SMS_SMTP_REJECT_UNAUTHORIZED_TLS || true
     },
     kazoo: {
         url: process.env.SMS_KAZOO_URL || '',

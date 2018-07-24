@@ -6,16 +6,25 @@ class EmailHelper {
         this.logger = logger;
         this.config = config;
 
-        // create smtp transporter object
-        this.transporter = nodemailer.createTransport({
+        const transporterOptions = {
             host: this.config.email.smtpHost,
             port: parseInt(this.config.email.smtpPort),
             secure: parseInt(this.config.email.smtpPort) === 465 ? true : false, // true for 465, false for other ports
-            auth: {
-                user: this.config.email.smtpUser,
-                pass: this.config.email.smtpPassword
+            tls: {
+                rejectUnauthorized: this.config.email.rejectUnauthorizedTLS
             }
-        });
+        };
+
+        // add auth to smtp transporter if it was configured
+        if (this.config.email.smtpUser && this.config.email.smtpPassword) {
+            transporterOptions.auth = {
+                user: this.config.email.smtpUser,
+                password: this.config.email.smtpPassword
+            };
+        }
+
+        // create smtp transporter object
+        this.transporter = nodemailer.createTransport(transporterOptions);
 
         // configure sendgrid package
         sgMail.setApiKey(this.config.email.sendGridApiKey);

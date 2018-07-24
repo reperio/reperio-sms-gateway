@@ -3,14 +3,18 @@ module.exports = {
         jsonSecret: process.env.SMS_SERVER_JSON_SECRET || 'secret-key',
         url: process.env.SMS_SERVER_URL || ''
     },
+    smtp: {
+        host: process.env.SMS_SMTP_HOST || '',
+        port: process.env.SMS_SMTP_PORT || 465,
+        user: process.env.SMS_SMTP_USER || '',
+        password: process.env.SMS_SMTP_USER_PASSWORD || '',
+        senderAddress: process.env.SMS_SMTP_SENDER_ADDRESS || '',
+        senderName: process.env.SMS_SMTP_SENDER_NAME || ''
+    },
     kazoo: {
         url: process.env.SMS_KAZOO_URL || '',
         credentials: process.env.SMS_KAZOO_CREDENTIALS || '',
         accountName: process.env.SMS_KAZOO_ACCOUNT || ''
-    },
-    sendgrid: {
-        from: process.env.SMS_SENDGRID_FROM_ADDRESS || '',
-        apiKey: process.env.SMS_SENDGRID_API_KEY || ''
     },
     bandwidth: {
         url: process.env.SMS_BANDWIDTH_URL || 'https://api.catapult.inetwork.com',

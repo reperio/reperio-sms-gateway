@@ -4,7 +4,7 @@ const config = require('../../config');
 const Logger = require('../shared/logger');
 const UtilityHelper = require('../../helpers/utilityHelper');
 
-describe('Kazoo unit tests', function () {
+describe('Utility helper tests', function () {
     beforeAll(() => {
         const logger = new Logger();
         this.utilityHelper = new UtilityHelper(logger, config);

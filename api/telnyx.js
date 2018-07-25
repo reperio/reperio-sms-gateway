@@ -35,10 +35,15 @@ const handlers = {
                 notificationEmailAddress = null;
             }
 
+            let cnam = '';
+            if (request.server.app.config.cnam.enabled) {
+                cnam = await telnyxHelper.getCNAMRecord(messageDetails.from);
+            }
+
             if (notificationEmailAddress) {
                 // send email to user with message contents
                 logger.info(`sending email to ${notificationEmailAddress}`);
-                await emailHelper.sendEmail(messageDetails.body, messageDetails.from, notificationEmailAddress);
+                await emailHelper.sendEmail(messageDetails.body, messageDetails.from, notificationEmailAddress, cnam);
                 logger.info('email sent');
             } else {
                 logger.warn('could not find email address, notification email not sent');

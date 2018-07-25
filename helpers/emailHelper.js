@@ -30,22 +30,22 @@ class EmailHelper {
         sgMail.setApiKey(this.config.email.sendGridApiKey);
     }
 
-    async sendEmail(message, from, email) {
+    async sendEmail(message, from, email, cnam) {
         if (this.config.email.method === 'smtp') {
-            await this.sendSMTPEmail(message, from, email);
+            await this.sendSMTPEmail(message, from, email, cnam);
         } else if (this.config.email.method === 'sendgrid') {
-            await this.sendSendGridEmail(message, from, email);
+            await this.sendSendGridEmail(message, from, email, cnam);
         } else {
             this.logger.error(`invalid email method "${this.config.email.method}", must be either "smtp" or "sendgrid"`);
             this.logger.error('unable to send email');
         }
     }
 
-    async sendSendGridEmail(message, from, email) {
+    async sendSendGridEmail(message, from, email, cnam) {
         const msg = {
             to: email,
             from: this.config.email.sender,
-            subject: `New message from ${from}`,
+            subject: `New message from ${from} ${cnam}`,
             text: message,
             html: message
         };
@@ -55,12 +55,12 @@ class EmailHelper {
         await sgMail.send(msg);
     }
 
-    async sendSMTPEmail(message, from, email) {
+    async sendSMTPEmail(message, from, email, cnam) {
         return new Promise((resolve, reject) => {
             let mailOptions = {
                 from: this.config.email.sender,
                 to: email,
-                subject: `New message from ${from}`,
+                subject: `New message from ${from} ${cnam}`,
                 text: message,
                 html: message
             };

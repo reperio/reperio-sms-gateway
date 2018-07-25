@@ -29,6 +29,21 @@ class TelnyxHelper {
         const result = await request(options);
         return result;
     }
+
+    async getCNAMRecord(phoneNumber) {
+        const url = `${this.config.cnam.telnyxUrl}/cnam/v1/caller-information?tn=${phoneNumber}`;
+        const options = {
+            uri: url,
+            method: 'GET',
+            headers: {
+                Authorization: `Token ${this.config.cnam.telnyxApiToken}`
+            }
+        };
+
+        this.logger.debug(options);
+        const result = await request(options);
+        return result;
+    }
 }
 
 module.exports = TelnyxHelper;

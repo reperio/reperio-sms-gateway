@@ -3,6 +3,11 @@ module.exports = {
         jsonSecret: process.env.SMS_SERVER_JSON_SECRET || 'secret-key',
         url: process.env.SMS_SERVER_URL || ''
     },
+    cnam: {
+        enabled: process.env.SMS_CNAM_ENABLED === 'true' ? true : false,
+        telnyxApiToken: process.env.SMS_TELNYX_API_TOKEN || '',
+        telnyxUrl: process.env.SMS_TELNYX_CNAM_URL || 'https://data.telnyx.com'
+    },
     email: {
         smtpHost: process.env.SMS_SMTP_HOST || 'localhost',
         smtpPort: process.env.SMS_SMTP_PORT || 25,

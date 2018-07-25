@@ -7,6 +7,7 @@ const handlers = {
             const kazooHelper = await request.app.getNewKazooHelper();
             const emailHelper = await request.app.getNewEmailHelper();
             const bandwidthHelper = await request.app.getNewBandwidthHelper();
+            const telnyxHelper = await request.app.getNewTelnyxHelper();
             const utilityHelper = await request.app.getNewUtilityHelper();
 
             const messageDetails = request.payload;
@@ -40,10 +41,15 @@ const handlers = {
                 notificationEmailAddress = null;
             }
 
+            let cnam = '';
+            if (request.server.app.config.cnam.enabled) {
+                cnam = await telnyxHelper.getCNAMRecord(messageDetails.from);
+            }
+
             if (notificationEmailAddress) {
                 // send email to user with message contents
                 logger.info(`sending email to ${notificationEmailAddress}`);
-                await emailHelper.sendEmail(messageDetails.text, messageDetails.from, notificationEmailAddress);
+                await emailHelper.sendEmail(messageDetails.text, messageDetails.from, notificationEmailAddress, cnam);
                 logger.info('email sent');
             } else {
                 logger.warn('could not find email address, notification email not sent');

@@ -20,6 +20,7 @@
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
     "nodemailer": "^4.6.7",
+    "phone-formatter": "0.0.2",
     "request-promise-native": "^1.0.5",
     "winston": "^2.4.3",
     "winston-daily-rotate-file": "^1.7.2"

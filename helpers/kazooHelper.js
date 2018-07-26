@@ -203,7 +203,7 @@ class KazooHelper {
                 this.logger.debug(`callflows: ${JSON.stringify(callflows)}`);
                 return {
                     account: account,
-                    user: null
+                    user: {}
                 };
             }
 

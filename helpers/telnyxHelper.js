@@ -6,13 +6,13 @@ class TelnyxHelper {
         this.config = config;
     }
 
-    async sendTextMessage(to, from, message, requestId) {
+    async sendTextMessage(message) {
         const url = `${this.config.telnyx.url}/messages`;
         const body = {
-            from: from,
-            to: to,
-            body: message,
-            delivery_status_webhook_url: `${this.config.server.url}/api/telnyx/outgoing/${requestId}`
+            from: message.to,
+            to: message.from,
+            body: message.responseText,
+            delivery_status_webhook_url: `${this.config.server.url}/api/telnyx/outgoing/${message.requestId}`
         };
 
         const options = {

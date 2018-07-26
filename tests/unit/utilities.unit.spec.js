@@ -24,4 +24,9 @@ describe('Utility helper tests', function () {
         const result = await this.utilityHelper.shouldReplyToNumber('011444832719');
         expect(result).toBe(false);
     });
+
+    it('shouldReplyToNumber() should not match 17478', async () => {
+        const result = await this.utilityHelper.shouldReplyToNumber('17478');
+        expect(result).toBe(false);
+    });
 });

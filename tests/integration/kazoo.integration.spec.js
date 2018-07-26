@@ -6,7 +6,7 @@ const KazooHelper = require('../../helpers/kazooHelper');
 
 describe('Kazoo integration tests', function() {
     beforeAll(() => {
-        const logger = new Logger(true);
+        const logger = new Logger();
         this.kazooHelper = new KazooHelper(logger, config);
     });
 
@@ -22,17 +22,17 @@ describe('Kazoo integration tests', function() {
     });
 
     it('Fetches correct account from kazoo', async () => {
-        const result = await this.kazooHelper.getAccountByPhoneNumber('fakeId', '+15138184658');
+        const result = await this.kazooHelper.getAccountByPhoneNumber('+15138184658');
         expect(result.id).toBe('d38abe802090d3216dff4993fd5ee186');
     });
 
     it('Fetches correct user from kazoo', async () => {
-        const result = await this.kazooHelper.getUserByPhoneNumber('fakeId', '+15138184658');
+        const result = await this.kazooHelper.getUserByPhoneNumber('+15138184658');
         expect(result.user.id).toBe('9449e0a2eae911458e10ebf5bdca37c7');
     });
 
     it('getUserByPhoneNumber returns null user if owner_id doesn\'t exist in callflow', async () => {
-        const result = await this.kazooHelper.getUserByPhoneNumber('fakeId', '+15138184650');
-        expect(result.user).toBe(null);
+        const result = await this.kazooHelper.getUserByPhoneNumber('+15138184650');
+        expect(result.user).toEqual({});
     });
 });

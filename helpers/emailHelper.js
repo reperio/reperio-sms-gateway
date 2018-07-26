@@ -1,6 +1,7 @@
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 const path = require('path');
+const phoneFormatter = require('phone-formatter');
 const sgMail = require('@sendgrid/mail');
 
 class EmailHelper {
@@ -50,10 +51,14 @@ class EmailHelper {
         const msg = {
             to: message.notificationEmail,
             from: this.config.email.sender,
-            subject: `New message from ${message.from}`,
+            subject: `New message from ${phoneFormatter.format(message.from, this.config.phoneNumberFormat)}`,
             text: message.contents,
             html: formattedTemplate
         };
+
+        if (message.cnam) {
+            msg.subject += ' - ' + message.cnam;
+        }
 
         this.logger.debug(msg);
 
@@ -68,11 +73,15 @@ class EmailHelper {
             let mailOptions = {
                 from: this.config.email.sender,
                 to: message.notificationEmail,
-                subject: `New message from ${message.from} ${message.cnam || ''}`,
+                subject: `New message from ${phoneFormatter.format(message.from, this.config.phoneNumberFormat)}`,
                 text: message.contents,
                 html: formattedTemplate
             };
         
+            if (message.cnam) {
+                mailOptions.subject += ' - ' + message.cnam;
+            }
+
             this.logger.debug(mailOptions);
     
             // send mail with defined transport object
@@ -102,7 +111,7 @@ class EmailHelper {
 
     async formatHtml(template, message) {
         try {
-            let from = message.from;
+            let from = phoneFormatter.format(message.from, this.config.phoneNumberFormat);
             if (message.cnam) {
                 from += ' - ' + message.cnam;
             }

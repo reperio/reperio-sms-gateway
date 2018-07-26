@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+
 class UtilityHelper {
     constructor (logger, config) {
         this.logger = logger;

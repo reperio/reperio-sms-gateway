@@ -33,5 +33,6 @@ module.exports = {
         url: process.env.SMS_TELNYX_URL || 'https://sms.telnyx.com',
         profileSecret: process.env.SMS_TELNYX_PROFILE_SECRET || ''
     },
-    phoneNumberRegex: process.env.SMS_PHONE_NUMBER_REGEX || '^\\+1\\d{10}'
+    phoneNumberRegex: process.env.SMS_PHONE_NUMBER_REGEX || '^\\+1\\d{10}',
+    phoneNumberFormat: process.env.SMS_PHONE_NUMBER_FORMAT || '(NNN) NNN-NNNN' // used for formatting originating numbers in email notifications
 };

@@ -55,6 +55,7 @@ class MessageHelper {
         if (this.config.cnam.enabled) {
             this.logger.info(`cnam lookup enabled, fetching record for ${message.from}`);
             message.cnam = await telnyxHelper.getCNAMRecord(message.from);
+            this.logger.debug(`cnam reponse: ${message.cnam}`);
         } else {
             this.logger.info('cnam lookup disabled, skipping');
         }

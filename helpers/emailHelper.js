@@ -101,11 +101,12 @@ class EmailHelper {
     }
 
     async formatHtml(template, message) {
-        let from = message.from;
-        if (message.cnam) {
-            from += ' - ' + message.cnam;
-        }
         try {
+            let from = message.from;
+            if (message.cnam) {
+                from += ' - ' + message.cnam;
+            }
+        
             let newTemplate = template.replace('{{host}}', this.config.server.url);
             newTemplate = newTemplate.replace('{{from}}', from);
             newTemplate = newTemplate.replace('{{contents}}', message.contents);
@@ -115,6 +116,7 @@ class EmailHelper {
             return newTemplate;
         } catch (err) {
             this.logger.error('failed to format template');
+            this.logger.error(err);
             throw err;
         }
     }

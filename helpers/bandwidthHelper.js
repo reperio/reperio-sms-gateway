@@ -6,13 +6,13 @@ class BandwidthHelper {
         this.config = config;
     }
 
-    async sendTextMessage(to, from, message, requestId) {
+    async sendTextMessage(message) {
         const url = `${this.config.bandwidth.url}/v1/users/${this.config.bandwidth.userId}/messages`;
         const body = {
-            from: from,
-            to: to,
+            from: message.to,
+            to: message.from,
             text: message,
-            callbackUrl: `${this.config.server.url}/api/bandwidth/outgoing/${requestId}`,
+            callbackUrl: `${this.config.server.url}/api/bandwidth/outgoing/${message.requestId}`,
             receiptRequested: 'all'
         };
 

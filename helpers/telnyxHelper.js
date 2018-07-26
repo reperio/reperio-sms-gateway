@@ -11,7 +11,7 @@ class TelnyxHelper {
         const body = {
             from: message.to,
             to: message.from,
-            body: message.contents,
+            body: message.responseText,
             delivery_status_webhook_url: `${this.config.server.url}/api/telnyx/outgoing/${message.requestId}`
         };
 

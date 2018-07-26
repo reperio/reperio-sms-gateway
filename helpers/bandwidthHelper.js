@@ -11,7 +11,7 @@ class BandwidthHelper {
         const body = {
             from: message.to,
             to: message.from,
-            text: message.contents,
+            text: message.responseText,
             callbackUrl: `${this.config.server.url}/api/bandwidth/outgoing/${message.requestId}`,
             receiptRequested: 'all'
         };

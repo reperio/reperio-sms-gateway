@@ -19,6 +19,8 @@ class MessageHelper {
             requestId: id of the original hapi request
     */
     async processMessage(message) {
+        this.logger.info(`processing message: ${JSON.stringify(message)}`);
+
         // initialize helpers
         const bandwidthHelper = new BandwidthHelper(this.logger, this.config);
         const emailHelper = new EmailHelper(this.logger, this.config);
@@ -27,6 +29,7 @@ class MessageHelper {
         const utilityHelper = new UtilityHelper(this.logger, this.config);
 
         // get user associated with destination phone number
+        this.logger.info(`fetching user and account associated with number: ${message.to}`);
         const userAndAccount = await kazooHelper.getUserByPhoneNumber(message.to);
         this.logger.debug(userAndAccount);
 
@@ -48,6 +51,7 @@ class MessageHelper {
         } else {
             this.logger.info('sending notification email');
             await emailHelper.sendEmail(message);
+            this.logger.info('email sent');
         }
 
         // send response text
@@ -61,11 +65,15 @@ class MessageHelper {
             this.logger.info('originating number passed regex check');
 
             if (message.endpoint === 'telnyx') {
-                this.logger.info('sending rely message through telnyx');
+                this.logger.info('sending reply message through telnyx');
                 await telnyxHelper.sendTextMessage(message);
+                this.logger.info('reply message sent');
             } else if (message.endpoint === 'bandwidth') {
                 this.logger.info('sending reply message through bandwidth');
                 await bandwidthHelper.sendTextMessage(message);
+                this.logger.info('reply message sent');
+            } else {
+                this.logger.warn(`invalid endpoint: ${message.endpoint}, reply message not sent`);
             }
         }
 

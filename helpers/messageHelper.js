@@ -33,9 +33,18 @@ class MessageHelper {
         const userAndAccount = await kazooHelper.getUserByPhoneNumber(message.to);
         this.logger.debug(userAndAccount);
 
+        if (userAndAccount === null) {
+            this.logger.warn(`could not find user or account for number: ${message.to}, exiting script`);
+            return null;
+        }
+
         // set notification email and response text on message object
-        message.notificationEmail = userAndAccount.user.email || userAndAccount.account.sms_contact_email || null;
-        message.responseText = userAndAccount.user.sms_response_text || userAndAccount.account.sms_response_text || null;
+        try {
+            message.notificationEmail = userAndAccount.user.email || userAndAccount.account.sms_contact_email || null;
+            message.responseText = userAndAccount.user.sms_response_text || userAndAccount.account.sms_response_text || null;
+        } catch (err) {
+            this.logger.warn('issue with setting notification email and response text');
+        }
 
         // look up cnam record (if enabled)
         if (this.config.cnam.enabled) {

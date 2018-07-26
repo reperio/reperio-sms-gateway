@@ -50,7 +50,7 @@ class EmailHelper {
         const msg = {
             to: message.notificationEmail,
             from: this.config.email.sender,
-            subject: `New message from ${message.from} ${message.cnam || ''}`,
+            subject: `New message from ${message.from}`,
             text: message.contents,
             html: formattedTemplate
         };
@@ -101,7 +101,7 @@ class EmailHelper {
     }
 
     async formatHtml(template, message) {
-        const from = message.from;
+        let from = message.from;
         if (message.cnam) {
             from += ' - ' + message.cnam;
         }

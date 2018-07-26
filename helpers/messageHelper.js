@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const BandwidthHelper = require('./bandwidthHelper');
 const EmailHelper = require('./emailHelper');
 const KazooHelper = require('./kazooHelper');
@@ -20,6 +22,9 @@ class MessageHelper {
     */
     async processMessage(message) {
         this.logger.info(`processing message: ${JSON.stringify(message)}`);
+
+        // set the time we received the message
+        message.receivedAt = moment(); // this is in EST
 
         // initialize helpers
         const bandwidthHelper = new BandwidthHelper(this.logger, this.config);

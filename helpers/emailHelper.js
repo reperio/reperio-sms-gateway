@@ -1,4 +1,6 @@
+const fs = require('fs');
 const nodemailer = require('nodemailer');
+const path = require('path');
 const sgMail = require('@sendgrid/mail');
 
 class EmailHelper {
@@ -42,12 +44,15 @@ class EmailHelper {
     }
 
     async sendSendGridEmail(message) {
+        const template = await this.loadTemplate();
+        const formattedTemplate = await this.formatHtml(template, message);
+
         const msg = {
             to: message.notificationEmail,
             from: this.config.email.sender,
             subject: `New message from ${message.from} ${message.cnam || ''}`,
             text: message.contents,
-            html: message.contents
+            html: formattedTemplate
         };
 
         this.logger.debug(msg);
@@ -56,13 +61,16 @@ class EmailHelper {
     }
 
     async sendSMTPEmail(message) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
+            const template = await this.loadTemplate();
+            const formattedTemplate = await this.formatHtml(template, message);
+
             let mailOptions = {
                 from: this.config.email.sender,
                 to: message.notificationEmail,
                 subject: `New message from ${message.from} ${message.cnam || ''}`,
                 text: message.contents,
-                html: message.contents
+                html: formattedTemplate
             };
         
             this.logger.debug(mailOptions);
@@ -77,8 +85,39 @@ class EmailHelper {
                 resolve();
             });
         });
-        
-}
+    }
+
+    // read the email template from the file
+    async loadTemplate() {
+        return new Promise((resolve, reject) => {
+            fs.readFile(path.join('templates', 'email.html'), (err, data) => {
+                if (err) {
+                    reject(err);
+                }
+
+                resolve('' + data);
+            });
+        });
+    }
+
+    async formatHtml(template, message) {
+        const from = message.from;
+        if (message.cnam) {
+            from += ' - ' + message.cnam;
+        }
+        try {
+            let newTemplate = template.replace('{{host}}', this.config.server.url);
+            newTemplate = newTemplate.replace('{{from}}', from);
+            newTemplate = newTemplate.replace('{{contents}}', message.contents);
+            newTemplate = newTemplate.replace('{{date}}', message.receivedAt.format('MM/DD/YYYY hh:mm a'));
+
+            this.logger.debug(newTemplate);
+            return newTemplate;
+        } catch (err) {
+            this.logger.error('failed to format template');
+            throw err;
+        }
+    }
 }
 
 module.exports = EmailHelper;

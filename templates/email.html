@@ -1,0 +1,134 @@
+<html>
+    <head>
+        <link href='https://fonts.googleapis.com/css?family=Jaldi' rel='stylesheet'>
+        <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/css?family=Barlow+Condensed" rel="stylesheet">
+        <style>
+            .background {
+                background-color: #D7D7D7;
+                width: 100%;
+                font-family: 'Lato', sans-serif;
+                color: #646565;
+                font-size: 1.5em;
+            }
+
+            .foreground {
+                width: 75%;
+                background-color: #FFFFFF;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                border-bottom: 1px solid #646565;
+                max-width: 1000px;
+            }
+            
+            .banner {
+                width: 100%;
+                margin-bottom: 3em;
+            }
+
+            .banner-image {
+                max-width:100%;
+                max-height:100%;
+            }
+
+            .intro {
+                margin-left: auto;
+                margin-right: auto;
+                width: 75%;
+                display: block;
+                text-align: left;
+            }
+
+            .intro-hello {
+                margin-bottom: -0.5em;
+                font-family: 'Jaldi', sans-serif;
+                color: #4178B7;
+                font-size: 2em;
+            }
+
+            .message {
+                margin-top: 3em;
+                width: 95%;
+                border: 2px solid #C57A32;
+                text-align: left;
+                margin-left: auto;
+                margin-right: auto;
+                margin-bottom: 1em;
+            }
+
+            .message-header {
+                text-align: center;
+                color: #FFFFFF;
+                background-color: #F19437;
+                padding-top: 0.5em;
+                padding-bottom: 0.5em;
+                font-size: 2em;
+                font-family: 'Barlow Condensed', sans-serif;
+            }
+
+            .message-body {
+                width: 85%;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 2em;
+            }
+
+            .message-footer {
+                width: 85%;
+                margin-top: 1em;
+                margin-bottom: 2em;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .outer-footer {
+                width: 75%;
+                margin-left: auto;
+                margin-right: auto;
+                max-width: 1000px;
+            }
+
+            .inner-footer {
+                width: 95%;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 1em;
+                padding-bottom: 2em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="background">
+            <div class="foreground">
+                <!-- Banner -->
+                <div class="banner">
+                    <img class="banner-image" alt="reperio-color-bar" src="{{host}}/reperio-bar.jpg">
+                </div>
+
+                <!-- Introduction Text-->
+                <div class="intro">
+                    <p class="intro-hello"><b>Hello,</b></p>
+                    <p>You have a new message from {{from}}.</p>
+                </div>
+
+                <!-- Message -->
+                <div class="message">
+                    <!-- Message Header -->
+                    <div class="message-header">YOUR MESSAGE:</div>
+
+                    <!-- Message Body -->
+                    <div class="message-body">{{contents}} </div>
+
+                    <!-- Message Footer -->
+                    <div class="message-footer"><b>Received:</b> {{date}} EST.</div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="outer-footer">
+                <div class="inner-footer">Reper.io / 513-000-0000 / info@reper.io</div>
+            </div>
+        </div>
+    </body>
+</html>

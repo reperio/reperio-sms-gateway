@@ -1,7 +1,7 @@
 module.exports = {
     server: {
         jsonSecret: process.env.SMS_SERVER_JSON_SECRET || 'secret-key',
-        url: process.env.SMS_SERVER_URL || ''
+        url: process.env.SMS_SERVER_URL || 'https://sms-gateway-test.reper.io'
     },
     cnam: {
         enabled: process.env.SMS_CNAM_ENABLED === 'true' ? true : false,

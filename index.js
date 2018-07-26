@@ -1,4 +1,6 @@
+const path = require('path');
 const ReperioServer = require('hapijs-starter');
+
 const API = require('./api');
 const config = require('./config');
 const LoggingHelper = require('./helpers/loggingHelper');
@@ -21,6 +23,19 @@ const start = async () => {
                 prefix: '/api'
             }
         };
+
+        await reperio_server.registerAdditionalPlugin(require('inert'));
+        reperio_server.server.route({
+            method: 'GET',
+            path: '/{file}',
+            config: { auth: false },
+            handler: async (request, h) => {
+                const file = request.params.file;
+                request.app.logger.debug('received media request');
+                const filePath = path.join('media', file);
+                return h.file(filePath, { confine: false });
+            }
+        });
 
         await reperio_server.registerAdditionalPlugin(apiPluginPackage);
 

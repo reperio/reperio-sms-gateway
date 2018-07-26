@@ -15,7 +15,8 @@ class MessageHelper {
             to: destination phone number
             from: originating phone number
             contents: contents of message
-            endpoint: either 'telnyx' or 'bandwidth'
+            endpoint: either 'telnyx' or 'bandwidth',
+            requestId: id of the original hapi request
     */
     async processMessage(message) {
         // initialize helpers

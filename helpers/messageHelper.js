@@ -64,8 +64,8 @@ class MessageHelper {
         }
 
         // send response text
-        message.shouldReply = true;
-        if (!utilityHelper.shouldReplyToNumber(message.from)) {
+        message.shouldReply = await utilityHelper.shouldReplyToNumber(message.from);
+        if (!message.shouldReply) {
             this.logger.warn('originating number failed regex check, skipping reply message');
             message.shouldReply = false;
         } else if (message.responseText === null) {

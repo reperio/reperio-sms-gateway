@@ -45,7 +45,7 @@ class EmailHelper {
         const msg = {
             to: message.notificationEmail,
             from: this.config.email.sender,
-            subject: `New message from ${message.from} ${message.cnam}`,
+            subject: `New message from ${message.from} ${message.cnam || ''}`,
             text: message.contents,
             html: message.contents
         };
@@ -60,7 +60,7 @@ class EmailHelper {
             let mailOptions = {
                 from: this.config.email.sender,
                 to: message.notificationEmail,
-                subject: `New message from ${message.from} ${message.cnam}`,
+                subject: `New message from ${message.from} ${message.cnam || ''}`,
                 text: message.contents,
                 html: message.contents
             };

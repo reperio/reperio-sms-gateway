@@ -98,6 +98,16 @@
                 margin-top: 1em;
                 padding-bottom: 2em;
             }
+
+            .images {
+                width: 85%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .image {
+                max-width: 100%;
+            }
         </style>
     </head>
     <body>
@@ -122,6 +132,11 @@
                     <!-- Message Body -->
                     <div class="message-body">{{contents}} </div>
 
+                    <!-- Message Media -->
+                    <div class="images">
+                        {{media}}
+                    </div>
+                    
                     <!-- Message Footer -->
                     <div class="message-footer"><b>Received:</b> {{date}} EST.</div>
                 </div>

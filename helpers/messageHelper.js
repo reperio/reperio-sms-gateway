@@ -18,6 +18,7 @@ class MessageHelper {
             from: originating phone number
             contents: contents of message
             endpoint: either 'telnyx' or 'bandwidth',
+            media: list of media urls,
             requestId: id of the original hapi request
     */
     async processMessage(message) {
@@ -49,6 +50,21 @@ class MessageHelper {
             message.responseText = userAndAccount.user.sms_response_text || userAndAccount.account.sms_response_text || null;
         } catch (err) {
             this.logger.warn('issue with setting notification email and response text');
+        }
+
+        // download any media in the message
+        if (message.media && message.media.length > 0) {
+            this.logger.info(`media array has ${message.media.length} entries`);
+            const media = [];
+            for (let i = 0; i < message.media.length; i++) {
+                const mediaFile = await utilityHelper.downloadMedia(message.media[i]);
+                media.push(mediaFile);
+            }
+
+            message.media = media;
+        } else {
+            this.logger.info('message contained no media');
+            message.media = null;
         }
 
         // look up cnam record (if enabled)

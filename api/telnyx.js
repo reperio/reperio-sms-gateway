@@ -8,7 +8,7 @@ const handlers = {
             logger.debug(request.payload);
 
             const messageHelper = await request.app.getNewMessageHelper();
-            
+
             const message = {
                 to: request.payload.to,
                 from: request.payload.from,
@@ -16,6 +16,13 @@ const handlers = {
                 endpoint: 'telnyx',
                 requestId: request.info.id
             };
+
+            if (request.payload.media && request.payload.media.length > 0) {
+                message.media = [];
+                for (let i = 0; i < request.payload.media.length; i++) {
+                    message.media.push(request.payload.media[i].url);
+                }
+            }
 
             await messageHelper.processMessage(message);
 

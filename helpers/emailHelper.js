@@ -111,6 +111,7 @@ class EmailHelper {
 
     async formatHtml(template, message) {
         try {
+            this.logger.info('formatting email template html');
             let from = phoneFormatter.format(message.from, this.config.phoneNumberFormat);
             if (message.cnam) {
                 from += ' - ' + message.cnam;
@@ -121,7 +122,20 @@ class EmailHelper {
             newTemplate = newTemplate.replace('{{contents}}', message.contents);
             newTemplate = newTemplate.replace('{{date}}', message.receivedAt.format('MM/DD/YYYY hh:mm a'));
 
+            if (message.media && message.media.length > 0) {
+                this.logger.info('adding media entries to email');
+                let mediaHtml = '';
+                for (let i = 0; i < message.media.length; i++) {
+                    mediaHtml += `<img class="image" src="${this.config.server.url}/${message.media[i]}" alt="${message.media[i]}" />\n`;
+                }
+                
+                newTemplate = newTemplate.replace('{{media}}', mediaHtml);
+            } else {
+                newTemplate = newTemplate.replace('{{media}}', '');
+            }
+
             this.logger.debug(newTemplate);
+            this.logger.info('email formatted');
             return newTemplate;
         } catch (err) {
             this.logger.error('failed to format template');

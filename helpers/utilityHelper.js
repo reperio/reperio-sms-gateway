@@ -34,11 +34,7 @@ class UtilityHelper {
             // close the file and resolve the promise when the request is finished
             req.on('end', async () => {
                 file.close();
-                resolve({
-                    name: fileName,
-                    extension: fileExtension,
-                    data: await this.getEncodedMedia(fileName)
-                });
+                resolve(fileName);
             });
 
             // handle errors

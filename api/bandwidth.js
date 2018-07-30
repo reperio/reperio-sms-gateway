@@ -17,6 +17,10 @@ const handlers = {
                 requestId: request.info.id
             };
 
+            if (request.payload.eventType === 'mms') {
+                message.media = request.payload.media;
+            }
+
             await messageHelper.processMessage(message);
 
             return '';

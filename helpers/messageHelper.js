@@ -1,4 +1,4 @@
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 const BandwidthHelper = require('./bandwidthHelper');
 const EmailHelper = require('./emailHelper');
@@ -25,7 +25,7 @@ class MessageHelper {
         this.logger.info(`processing message: ${JSON.stringify(message)}`);
 
         // set the time we received the message
-        message.receivedAt = moment(); // this is in EST
+        message.receivedAt = moment().tz(this.config.localTimezone);
 
         // initialize helpers
         const bandwidthHelper = new BandwidthHelper(this.logger, this.config);

@@ -46,6 +46,9 @@ const start = async () => {
             type: 'onPostAuth',
             method: async (request, h) => {
                 request.app.logger = new LoggingHelper(reperio_server.app.logger, request.info.id);
+                if (request.payload) {
+                    request.app.logger.debug(`new request: ${JSON.stringify(request.payload)}`);
+                }
 
                 return h.continue;
             }

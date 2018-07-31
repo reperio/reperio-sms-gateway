@@ -153,7 +153,7 @@ class EmailHelper {
                 this.logger.info('adding media entries to email');
                 let mediaHtml = '';
                 for (let i = 0; i < message.media.length; i++) {
-                    mediaHtml += this.getImageText(message.media[i]);
+                    mediaHtml += await this.getImageText(message.media[i]);
                     this.logger.info(`processed ${message.media[i].fileName}`);
                 }
                 

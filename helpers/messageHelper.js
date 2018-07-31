@@ -54,10 +54,19 @@ class MessageHelper {
 
         // download any media in the message
         if (message.media && message.media.length > 0) {
+            let auth = null;
+            if (message.endpoint === 'bandwidth') {
+                this.logger.info('configuring basic auth for bandwidth media requests');
+                auth = {
+                    user: this.config.bandwidth.authUsername,
+                    password: this.config.bandwidth.authPassword
+                };
+            }
+
             this.logger.info(`media array has ${message.media.length} entries`);
             const media = [];
             for (let i = 0; i < message.media.length; i++) {
-                const mediaFile = await utilityHelper.downloadMedia(message.media[i]);
+                const mediaFile = await utilityHelper.downloadMedia(message.media[i], auth);
                 media.push(mediaFile);
             }
 

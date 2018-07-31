@@ -13,9 +13,8 @@ class UtilityHelper {
         return number.match(this.config.phoneNumberRegex) !== null;
     }
 
-    async downloadMedia(url) {
+    async downloadMedia(url, auth) {
         return new Promise((resolve, reject) => {
-           
             // open file
             const fileExtension = url.substr(url.lastIndexOf('.') + 1);
             const fileName = uuid() + '.' + fileExtension;
@@ -23,8 +22,19 @@ class UtilityHelper {
 
             this.logger.info(`downloading media: ${url} -> ${this.config.mediaStoragePath}/${fileName}`);
 
+            // configure request options
+            const options = {
+                uri: url
+            };
+
+            // add auth if provided
+            if (auth) {
+                this.logger.debug('adding auth to media request');
+                options.auth = auth;
+            }
+
             // open media stream
-            const req = request.get(url);
+            const req = request.get(options);
     
             // pipe the response to the file
             req.on('response', (response) => {

@@ -36,5 +36,6 @@ module.exports = {
     phoneNumberRegex: process.env.SMS_PHONE_NUMBER_REGEX || '^\\+1\\d{10}',
     phoneNumberFormat: process.env.SMS_PHONE_NUMBER_FORMAT || '(NNN) NNN-NNNN', // used for formatting originating numbers in email notifications
     mediaStoragePath: process.env.SMS_MEDIA_STORAGE_PATH || '/tmp',
-    localTimezone: process.env.SMS_LOCAL_TIMEZONE || 'America/New_York'
+    localTimezone: process.env.SMS_LOCAL_TIMEZONE || 'America/New_York',
+    imageFormats: process.env.SMS_IMAGE_FORMATS || ['gif', 'bmp', 'jpg', 'png', 'tiff']
 };

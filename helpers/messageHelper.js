@@ -108,6 +108,13 @@ class MessageHelper {
             }
         }
 
+        // delete leftover media files
+        if (message.media && message.media.length > 0) {
+            for (let i = 0; i < message.media.length; i++) {
+                await utilityHelper.deleteMediaFile(message.media[i].fileName);
+            }
+        }
+
         return message;
     }
 }

@@ -50,7 +50,8 @@ class UtilityHelper {
                     fileName: fileName,
                     data: await this.getEncodedMedia(fileName),
                     fileExtension: fileExtension,
-                    url: url
+                    url: url,
+                    isImage: await this.isImage(fileExtension)
                 });
             });
 
@@ -92,6 +93,10 @@ class UtilityHelper {
                 }
             });
         });
+    }
+
+    async isImage(fileExtension) {
+        return this.config.imageFormats.includes(fileExtension);
     }
 }
 

@@ -68,7 +68,7 @@ class EmailHelper {
                     contentType: `image/${message.media[i].fileExtension}`,
                     cid: message.media[i].fileName,
                     content: message.media[i].data,
-                    disposition: 'inline',
+                    disposition: message.media[i].isImage ? 'inline' : 'attachment',
                     content_id: message.media[i].fileName
                 });
             }
@@ -153,9 +153,8 @@ class EmailHelper {
                 this.logger.info('adding media entries to email');
                 let mediaHtml = '';
                 for (let i = 0; i < message.media.length; i++) {
-                    mediaHtml += `<img class="image" src="cid:${message.media[i].fileName}" alt="${message.media[i].fileName}" />\n`;
-                    this.logger.info(`added ${message.media[i].fileName}`);
-                    this.logger.debug(`media base64: ${message.media[i].data}`);
+                    mediaHtml += this.getImageText(message.media[i]);
+                    this.logger.info(`processed ${message.media[i].fileName}`);
                 }
                 
                 newTemplate = newTemplate.replace('{{media}}', mediaHtml);
@@ -163,7 +162,6 @@ class EmailHelper {
                 newTemplate = newTemplate.replace('{{media}}', '');
             }
 
-            this.logger.debug(newTemplate);
             this.logger.info('email formatted');
             return newTemplate;
         } catch (err) {
@@ -171,6 +169,10 @@ class EmailHelper {
             this.logger.error(err);
             throw err;
         }
+    }
+
+    async getImageText(media) {
+        return media.isImage ? `<img class="image" src="cid:${media.fileName}" alt="${media.fileName}" />\n` : '';
     }
 }
 

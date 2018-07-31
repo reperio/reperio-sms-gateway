@@ -154,6 +154,8 @@ class EmailHelper {
                 let mediaHtml = '';
                 for (let i = 0; i < message.media.length; i++) {
                     mediaHtml += `<img class="image" src="cid:${message.media[i].fileName}" alt="${message.media[i].fileName}" />\n`;
+                    this.logger.info(`added ${message.media[i].fileName}`);
+                    this.logger.debug(`media base64: ${message.media[i].data}`);
                 }
                 
                 newTemplate = newTemplate.replace('{{media}}', mediaHtml);

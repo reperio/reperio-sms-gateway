@@ -33,6 +33,24 @@ class BandwidthHelper {
         const result = await request(options);
         return result;
     }
+
+    async deleteMedia(url) {
+        const options = {
+            uri: url,
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            auth: {
+                user: this.config.bandwidth.authUsername,
+                password: this.config.bandwidth.authPassword
+            }
+        };
+
+        this.logger.debug(options);
+        const result = await request(options);
+        return result;
+    }
 }
 
 module.exports = BandwidthHelper;

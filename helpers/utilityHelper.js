@@ -24,7 +24,8 @@ class UtilityHelper {
 
             // configure request options
             const options = {
-                uri: url
+                uri: url,
+                method: 'GET'
             };
 
             // add auth if provided
@@ -48,7 +49,8 @@ class UtilityHelper {
                 resolve({
                     fileName: fileName,
                     data: await this.getEncodedMedia(fileName),
-                    fileExtension: fileExtension
+                    fileExtension: fileExtension,
+                    url: url
                 });
             });
 

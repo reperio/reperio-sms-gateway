@@ -120,7 +120,14 @@ class MessageHelper {
         // delete leftover media files
         if (message.media && message.media.length > 0) {
             for (let i = 0; i < message.media.length; i++) {
+                this.logger.info(`deleting ${message.media[i].fileName} from local file system`);
                 await utilityHelper.deleteMediaFile(message.media[i].fileName);
+
+                // also delete media that was downloaded from bandwidth
+                if (message.endpoint === 'bandwidth') {
+                    this.logger.info(`deleting "${message.media[i].url}" (${message.media[i].fileName}) from bandwidth`);
+                    await this.bandwidthHelper.deleteMediaFile(message.media[i].url);
+                }
             }
         }
 

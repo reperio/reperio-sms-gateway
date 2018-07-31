@@ -20,7 +20,7 @@ class UtilityHelper {
             // open file
             const fileExtension = url.substr(url.lastIndexOf('.') + 1);
             const fileName = uuid() + '.' + fileExtension;
-            const file = fs.createWriteStream(path.join('media', fileName));
+            const file = fs.createWriteStream(path.join(this.config.mediaStoragePath, fileName));
 
             // open media stream
             const req = request.get(url);
@@ -50,7 +50,7 @@ class UtilityHelper {
     async getEncodedMedia(file, directory) {
         return new Promise((resolve, reject) => {
             // read and convert file to base64 encoding
-            fs.readFile(path.join(directory || 'media', file), 'base64', (err, data) => {
+            fs.readFile(path.join(directory || this.config.mediaStoragePath, file), 'base64', (err, data) => {
                 if (err) {
                     this.logger.error('failed to get base64 encoded media');
                     this.logger.error(err);

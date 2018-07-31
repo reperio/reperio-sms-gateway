@@ -60,6 +60,20 @@ class EmailHelper {
             msg.subject += ' - ' + message.cnam;
         }
 
+        if (message.media && message.media.length > 0) {
+            msg.attachments = [];
+            for (let i = 0; i < message.media.length; i++) {
+                msg.attachments.push({
+                    filename: message.media[i].fileName,
+                    contentType: `image/${message.media[i].fileExtension}`,
+                    cid: message.media[i].fileName,
+                    content: message.media[i].data,
+                    disposition: 'inline',
+                    content_id: message.media[i].fileName
+                });
+            }
+        }
+
         this.logger.debug(msg);
 
         await sgMail.send(msg);
@@ -82,16 +96,29 @@ class EmailHelper {
                 mailOptions.subject += ' - ' + message.cnam;
             }
 
+            if (message.media && message.media.length > 0) {
+                mailOptions.attachments = [];
+                for (let i = 0; i < message.media.length; i++) {
+                    mailOptions.attachments.push({
+                        filename: message.media[i].fileName,
+                        path: path.join(this.config.mediaStoragePath, message.media[i].fileName),
+                        cid: message.media[i].fileName
+                    });
+                }
+            }
+
             this.logger.debug(mailOptions);
     
             // send mail with defined transport object
-            this.transporter.sendMail(mailOptions, (error) => {
+            this.transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
                     this.logger.error(error);
-                    reject();
+                    this.logger.error(info);
+                    reject(error);
+                } else {
+                    this.logger.debug(info);
+                    resolve();
                 }
-
-                resolve();
             });
         });
     }
@@ -126,7 +153,7 @@ class EmailHelper {
                 this.logger.info('adding media entries to email');
                 let mediaHtml = '';
                 for (let i = 0; i < message.media.length; i++) {
-                    mediaHtml += `<img class="image" src="${this.config.server.url}/${message.media[i]}" alt="${message.media[i]}" />\n`;
+                    mediaHtml += `<img class="image" src="cid:${message.media[i].fileName}" alt="${message.media[i].fileName}" />\n`;
                 }
                 
                 newTemplate = newTemplate.replace('{{media}}', mediaHtml);

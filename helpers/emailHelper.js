@@ -63,9 +63,10 @@ class EmailHelper {
         if (message.media && message.media.length > 0) {
             msg.attachments = [];
             for (let i = 0; i < message.media.length; i++) {
+                 
                 msg.attachments.push({
                     filename: message.media[i].fileName,
-                    contentType: `image/${message.media[i].fileExtension}`,
+                    contentType: `image/${message.media[i].mimeType}`,
                     cid: message.media[i].fileName,
                     content: message.media[i].data,
                     disposition: message.media[i].isImage ? 'inline' : 'attachment',

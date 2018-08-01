@@ -20,6 +20,9 @@ class UtilityHelper {
             const fileName = uuid() + '.' + fileExtension;
             const file = fs.createWriteStream(path.join(this.config.mediaStoragePath, fileName));
 
+            // convert jpeg to jpg mime type
+            const mimeType = fileExtension === 'jpeg' ? 'jpg' : fileExtension;
+
             this.logger.info(`downloading media: ${url} -> ${this.config.mediaStoragePath}/${fileName}`);
 
             // configure request options
@@ -49,9 +52,9 @@ class UtilityHelper {
                 resolve({
                     fileName: fileName,
                     data: await this.getEncodedMedia(fileName),
-                    fileExtension: fileExtension,
                     url: url,
-                    isImage: await this.isImage(fileExtension)
+                    isImage: await this.isImage(mimeType),
+                    mimeType: mimeType
                 });
             });
 
@@ -95,8 +98,8 @@ class UtilityHelper {
         });
     }
 
-    async isImage(fileExtension) {
-        return this.config.imageFormats.includes(fileExtension);
+    async isImage(mimeType) {
+        return this.config.imageFormats.includes(mimeType);
     }
 }
 

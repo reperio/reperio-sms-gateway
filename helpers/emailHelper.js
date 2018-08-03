@@ -148,7 +148,7 @@ class EmailHelper {
             let newTemplate = template.replace('{{host}}', this.config.server.url);
             newTemplate = newTemplate.replace('{{from}}', from);
             newTemplate = newTemplate.replace('{{contents}}', message.contents);
-            newTemplate = newTemplate.replace('{{date}}', message.receivedAt.format('MM/DD/YYYY hh:mm a'));
+            newTemplate = newTemplate.replace('{{date}}', message.receivedAt.format('MM/DD/YYYY hh:mm a z'));
 
             if (message.media && message.media.length > 0) {
                 this.logger.info('adding media entries to email');
@@ -173,7 +173,7 @@ class EmailHelper {
     }
 
     async getImageText(media) {
-        return media.isImage ? `<img class="image" src="cid:${media.fileName}" alt="${media.fileName}" />\n` : '';
+        return media.isImage ? `<img style="max-width: 100%; margin-left: auto; margin-right: auto;" src="cid:${media.fileName}" alt="${media.fileName}" />\n` : '';
     }
 }
 

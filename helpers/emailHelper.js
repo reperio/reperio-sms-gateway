@@ -173,7 +173,7 @@ class EmailHelper {
     }
 
     async getImageText(media) {
-        return media.isImage ? `<img class="image" src="cid:${media.fileName}" alt="${media.fileName}" />\n` : '';
+        return media.isImage ? `<img style="max-width: 100%; margin-left: auto; margin-right: auto;" src="cid:${media.fileName}" alt="${media.fileName}" />\n` : '';
     }
 }
 

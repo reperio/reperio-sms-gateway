@@ -60,6 +60,7 @@ const routes = [
                     applicationId: Joi.string(),
                     time: Joi.date(),
                     state: Joi.string(),
+                    segmentCount: Joi.number().optional(),
                     deliveryState: Joi.string().optional().allow('').allow(null),
                     deliveryCode: Joi.string().optional().allow('').allow(null),
                     deliveryDescription: Joi.string().optional().allow('').allow(null),

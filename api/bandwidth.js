@@ -60,9 +60,9 @@ const routes = [
                     applicationId: Joi.string(),
                     time: Joi.date(),
                     state: Joi.string(),
-                    deliveryState: Joi.string(),
-                    deliveryCode: Joi.string(),
-                    deliveryDescription: Joi.string(),
+                    deliveryState: Joi.string().optional().allow('').allow(null),
+                    deliveryCode: Joi.string().optional().allow('').allow(null),
+                    deliveryDescription: Joi.string().optional().allow('').allow(null),
                     media: Joi.array().items(Joi.string()).optional()
                 }
             }

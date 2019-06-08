@@ -2,12 +2,16 @@ const path = require('path');
 const ReperioServer = require('hapijs-starter');
 
 const API = require('./api');
+const Cache = require('./cache');
 const config = require('./config');
 const LoggingHelper = require('./helpers/loggingHelper');
 const MessageHelper = require('./helpers/messageHelper');
 
 const start = async () => {
     try {
+        // initialize the cache
+        const recentNumbersCache = new Cache();
+
         //status monitor is turned off due to dependency issue with the pidusage dependency on the master branch of hapijs-status-monitor
         const reperio_server = new ReperioServer({
             statusMonitor: false,
@@ -58,7 +62,7 @@ const start = async () => {
             type: 'onRequest',
             method: async (request, h) => {
                 request.app.getNewMessageHelper = async () => {
-                    return new MessageHelper(request.app.logger, reperio_server.app.config);
+                    return new MessageHelper(request.app.logger, reperio_server.app.config, recentNumbersCache);
                 };
                 
                 return h.continue;

@@ -7,9 +7,10 @@ const TelnyxHelper = require('./telnyxHelper');
 const UtilityHelper = require('./utilityHelper');
 
 class MessageHelper {
-    constructor(logger, config) {
+    constructor(logger, config, recentNumbersCache) {
         this.logger = logger;
         this.config = config;
+        this.recentNumbersCache = recentNumbersCache;
     }
 
     /*
@@ -95,22 +96,30 @@ class MessageHelper {
         }
 
         // send response text
+        this.logger.info('checking if message should be replied to');
+        const cacheKey = await this.recentNumbersCache.buildCompositeKey(message.from, message.to);
+        message.timeOflastResponseToConversation = await this.recentNumbersCache.getValueByKey(cacheKey);
         message.shouldReply = await utilityHelper.shouldReplyToNumber(message.from);
+
         if (!message.shouldReply) {
             this.logger.warn('originating number failed regex check, skipping reply message');
             message.shouldReply = false;
+        } else if (message.timeOflastResponseToConversation !== null && moment.duration(moment.utc().diff(message.timeOflastResponseToConversation)).asMilliseconds() <= this.config.automatedResponseTimeLimit) {
+            this.logger.warn('already replied to conversation, skipping reply message');
         } else if (message.responseText === null) {
             this.logger.warn('could not find response text, skipping reply message');
         } else {
-            this.logger.info('originating number passed regex check');
+            this.logger.info('reply message checks have passed');
 
             if (message.endpoint === 'telnyx') {
                 this.logger.info('sending reply message through telnyx');
                 await telnyxHelper.sendTextMessage(message);
+                await this.recentNumbersCache.saveValueByKey(cacheKey, moment.utc());
                 this.logger.info('reply message sent');
             } else if (message.endpoint === 'bandwidth') {
                 this.logger.info('sending reply message through bandwidth');
                 await bandwidthHelper.sendTextMessage(message);
+                await this.recentNumbersCache.saveValueByKey(cacheKey, moment.utc());
                 this.logger.info('reply message sent');
             } else {
                 this.logger.warn(`invalid endpoint: ${message.endpoint}, reply message not sent`);

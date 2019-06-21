@@ -38,5 +38,5 @@ module.exports = {
     mediaStoragePath: process.env.SMS_MEDIA_STORAGE_PATH || '/tmp',
     localTimezone: process.env.SMS_LOCAL_TIMEZONE || 'America/New_York',
     imageFormats: process.env.SMS_IMAGE_FORMATS || ['gif', 'bmp', 'jpg', 'png', 'tiff'],
-    automatedResponseTimeLimit: process.env.SMS_AUTOMATED_RESPONSE_TIME_LIMIT || 15000
+    automatedResponseTimeLimit: process.env.SMS_AUTOMATED_RESPONSE_TIME_LIMIT || 1000 * 60 * 15 // 15 minutes
 };

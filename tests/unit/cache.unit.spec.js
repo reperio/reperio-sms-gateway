@@ -1,12 +1,15 @@
 /* eslint-env  jest */
 
 const Cache = require('../../cache');
+const moment = require('moment');
 
 describe('Cache unit tests', function () {
     let cache = null;
     
     beforeEach(() => {
-        cache = new Cache();
+        cache = new Cache({
+            automatedResponseTimeLimit: 1000 * 60 * 15 // 15 minutes
+        });
     });
 
     it('can build composite key', async () => {
@@ -36,5 +39,16 @@ describe('Cache unit tests', function () {
         expect(await cache.getNumberOfItemsInCache()).toEqual(1);
         await cache.deleteKey('key');
         expect(await cache.getNumberOfItemsInCache()).toEqual(0);
+    });
+
+    it('keys older than response time limit will be removed from the cache', async () => {
+        const now = moment.utc();
+        cache._cache.key1 = moment(now).subtract(1, 'hour');
+        cache._cache.key2 = moment(now).subtract(14, 'minutes');
+        cache._cache.key3 = now;
+
+        expect(await cache.getNumberOfItemsInCache()).toEqual(3);
+        await cache.cleanKeys();
+        expect(await cache.getNumberOfItemsInCache()).toEqual(2);
     });
 });

@@ -1,6 +1,11 @@
+const moment = require('moment');
+
 class Cache {
-    constructor() {
+    constructor(config) {
         this._cache = {};
+        this.config = config;
+
+        setInterval(() => this.cleanKeys(), this.config.automatedResponseTimeLimit);
     }
 
     async buildCompositeKey(key1, key2) {
@@ -21,6 +26,16 @@ class Cache {
 
     async getNumberOfItemsInCache() {
         return Object.keys(this._cache).length;
+    }
+
+    cleanKeys() {
+        const keys = Object.keys(this._cache);
+        keys.forEach(key => {
+            const duration = moment.duration(moment.utc().diff(this._cache[key]));
+            if (duration.asMilliseconds() > this.config.automatedResponseTimeLimit) {
+                this.deleteKey(key);
+            }
+        });
     }
 }
 

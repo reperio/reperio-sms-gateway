@@ -10,7 +10,7 @@ const MessageHelper = require('./helpers/messageHelper');
 const start = async () => {
     try {
         // initialize the cache
-        const recentNumbersCache = new Cache();
+        const recentNumbersCache = new Cache(config);
 
         //status monitor is turned off due to dependency issue with the pidusage dependency on the master branch of hapijs-status-monitor
         const reperio_server = new ReperioServer({

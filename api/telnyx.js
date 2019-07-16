@@ -57,6 +57,7 @@ const routes = [
                     from: Joi.string(),
                     to: Joi.string(),
                     body: Joi.string(),
+                    direction: Joi.string(),
                     media: Joi.array().items(Joi.object({
                         url: Joi.string(),
                         content_type: Joi.string(),

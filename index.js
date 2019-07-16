@@ -69,6 +69,18 @@ const start = async () => {
             }
         });
 
+        await reperio_server.registerExtension({
+            type: 'onPreResponse',
+            method: async (request, h) => {
+                const { response } = request;
+                if (response.isBoom && response.output.statusCode !== 200) {
+                    request.app.logger.error('Unhandled Error');
+                    request.app.logger.error(response);
+                }
+                return h.continue;
+            }
+        });
+
         await reperio_server.startServer();
     } catch (err) {
         console.error(err);

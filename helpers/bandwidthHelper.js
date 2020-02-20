@@ -7,9 +7,28 @@ class BandwidthHelper {
     }
 
     async sendTextMessage(message) {
+        if (Array.isArray(message.to)) {
+            const resultList = [];
+            for (const to of message.to) {
+                const singleMessage = {
+                    ...message,
+                    to,
+                    responseText: message.responseTexts[to]
+                }
+                const result = await this._sendMessage(singleMessage);
+                resultList.push(result);
+            }
+            return resultList;
+        } else {
+            return await this._sendMessage(message);
+        }
+    }
+    
+    async _sendMessage(message) {
         const url = `${this.config.bandwidth.url}/v2/users/${this.config.bandwidth.accountId}/messages`;
+
         const body = {
-            from: message.to[0],
+            from: message.to,
             to: message.from,
             text: message.responseText,
             applicationId: this.config.bandwidth.applicationId,

@@ -37,22 +37,42 @@ class MessageHelper {
 
         // get user associated with destination phone number
         this.logger.info(`fetching user and account associated with number: ${message.to}`);
-        // TODO: update to ensure _all To numbers_ are users
-        //? I think there will need to be a large overhaul to make group texts work?
-        const userAndAccount = await kazooHelper.getUserByPhoneNumber(message.to[0]);
-        this.logger.debug(userAndAccount);
+        if (Array.isArray(message.to)) {
+            message.notificationEmails = [];
+            message.responseTexts = {};
+            for (const to of message.to) {
+                const userAndAccount = await kazooHelper.getUserByPhoneNumber(to);
+                this.logger.debug(userAndAccount);
 
-        if (userAndAccount === null) {
-            this.logger.warn(`could not find user or account for number: ${message.to}, exiting script`);
-            return null;
-        }
+                if (userAndAccount === null) {
+                    this.logger.warn(`could not find user or account for number: ${to}, exiting script`);
+                    return null;
+                }
 
-        // set notification email and response text on message object
-        try {
-            message.notificationEmail = userAndAccount.user.email || userAndAccount.account.sms_contact_email || null;
-            message.responseText = userAndAccount.user.sms_response_text || userAndAccount.account.sms_response_text || null;
-        } catch (err) {
-            this.logger.warn('issue with setting notification email and response text');
+                // set notification email and response text on message object
+                try {
+                    message.notificationEmails.push(userAndAccount.user.email || userAndAccount.account.sms_contact_email || null);
+                    message.responseTexts[to] = userAndAccount.user.sms_response_text || userAndAccount.account.sms_response_text || null;
+                } catch (err) {
+                    this.logger.warn('issue with setting notification email and response text');
+                }
+            }
+        } else {
+            const userAndAccount = await kazooHelper.getUserByPhoneNumber(message.to[0]);
+            this.logger.debug(userAndAccount);
+
+            if (userAndAccount === null) {
+                this.logger.warn(`could not find user or account for number: ${message.to}, exiting script`);
+                return null;
+            }
+
+            // set notification email and response text on message object
+            try {
+                message.notificationEmail = userAndAccount.user.email || userAndAccount.account.sms_contact_email || null;
+                message.responseText = userAndAccount.user.sms_response_text || userAndAccount.account.sms_response_text || null;
+            } catch (err) {
+                this.logger.warn('issue with setting notification email and response text');
+            }
         }
 
         // download any media in the message
@@ -89,12 +109,20 @@ class MessageHelper {
         }
 
         // send notification email
-        if (message.notificationEmail === null) {
+        if (message.notificationEmail === null && !message.notificationEmails.length) {
             this.logger.warn('could not find an email address, skipping notification email');
         } else {
-            this.logger.info('sending notification email');
-            await emailHelper.sendEmail(message);
-            this.logger.info('email sent');
+            if (message.notificationEmails.length) {
+                for (const email of message.notificationEmails) {
+                    this.logger.info('sending notification email');
+                    await emailHelper.sendEmail(message, email);
+                    this.logger.info('email sent');
+                }
+            } else {
+                this.logger.info('sending notification email');
+                await emailHelper.sendEmail(message, message.notificationEmail);
+                this.logger.info('email sent');
+            }
         }
 
         // send response text

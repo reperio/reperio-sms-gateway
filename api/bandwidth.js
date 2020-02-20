@@ -1,6 +1,16 @@
 const Joi = require('joi');
 
+const bandwidthHandler = async (request, h) => {
+    const type = request.payload[0].type;
+    if (type === 'messsage-received') {
+        return await handlers.bandwidthIncoming(request, h);
+    } else {
+        return await handlers.bandwidthOutgoing(request, h);
+    }
+}
+
 const handlers = {
+    bandwidthHandler,
     bandwidthIncoming: async (request, h) => {
         const logger = request.app.logger;
         try {
@@ -46,7 +56,7 @@ const handlers = {
 const routes = [
     {
         method: 'POST',
-        path: '/bandwidth/incoming',
+        path: '/bandwidth',
         config: {
             auth: false,
             validate: {
@@ -55,12 +65,13 @@ const routes = [
                     time: Joi.date().required(),
                     description: Joi.string().required(),
                     to: Joi.string().required(),
+                    errorCode: Joi.number().optional(),
                     message: Joi.object({
                         id: Joi.string().required(),
                         time: Joi.date().required(),
-                        to: Joi.array().items(Joi.string()).required(),
+                        to: [Joi.string(), Joi.array().items(Joi.string())],
                         from: Joi.string().required(),
-                        text: Joi.string().required(),
+                        text: Joi.string().optional().allow(''),
                         applicationId: Joi.string().required(),
                         media: Joi.array().items(Joi.string()).optional(),
                         owner: Joi.string().required(),
@@ -71,31 +82,6 @@ const routes = [
             }
         },
         handler: handlers.bandwidthIncoming
-    }, {
-        method: 'POST',
-        path: '/bandwidth/outgoing/{requestId}',
-        config: {
-            auth: false,
-            validate: {
-                payload: {
-                    eventType: Joi.string(),
-                    direction: Joi.string(),
-                    from: Joi.string(),
-                    to: Joi.string(),
-                    messageId: Joi.string(),
-                    messageUri: Joi.string(),
-                    text: Joi.string(),
-                    applicationId: Joi.string(),
-                    time: Joi.date(),
-                    state: Joi.string(),
-                    deliveryState: Joi.string(),
-                    deliveryCode: Joi.string(),
-                    deliveryDescription: Joi.string(),
-                    media: Joi.array().items(Joi.string()).optional()
-                }
-            }
-        },
-        handler: handlers.bandwidthOutgoing
     }
 ];
 

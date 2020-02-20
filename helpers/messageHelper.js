@@ -37,7 +37,9 @@ class MessageHelper {
 
         // get user associated with destination phone number
         this.logger.info(`fetching user and account associated with number: ${message.to}`);
-        const userAndAccount = await kazooHelper.getUserByPhoneNumber(message.to);
+        // TODO: update to ensure _all To numbers_ are users
+        //? I think there will need to be a large overhaul to make group texts work?
+        const userAndAccount = await kazooHelper.getUserByPhoneNumber(message.to[0]);
         this.logger.debug(userAndAccount);
 
         if (userAndAccount === null) {

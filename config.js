@@ -24,7 +24,10 @@ module.exports = {
         accountName: process.env.SMS_KAZOO_ACCOUNT || ''
     },
     bandwidth: {
-        url: process.env.SMS_BANDWIDTH_URL || 'https://api.catapult.inetwork.com',
+        url: process.env.SMS_BANDWIDTH_URL || 'https://messaging.bandwidth.com/api',
+        urlv1: process.env.SMS_BANDWIDTH_URL_V1 || 'https://api.catapult.inetwork.com',
+        applicationId: process.env.SMS_BANDWIDTH_APPLICATION_ID || '',
+        accountId: process.env.SMS_BANDWIDTH_ACCOUNT_ID || '',
         userId: process.env.SMS_BANDWIDTH_USER_ID || '',
         authUsername: process.env.SMS_BANDWIDTH_AUTH_USERNAME || '',
         authPassword: process.env.SMS_BANDWIDTH_AUTH_PASSWORD || ''

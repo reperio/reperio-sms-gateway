@@ -7,24 +7,23 @@ class BandwidthHelper {
     }
 
     async sendTextMessage(message) {
-        const url = `${this.config.bandwidth.url}/v1/users/${this.config.bandwidth.userId}/messages`;
+        const url = `${this.config.bandwidth.url}/v2/users/${this.config.bandwidth.accountId}/messages`;
         const body = {
-            from: message.to,
+            from: message.to[0],
             to: message.from,
             text: message.responseText,
-            callbackUrl: `${this.config.server.url}/api/bandwidth/outgoing/${message.requestId}`,
-            receiptRequested: 'all'
+            applicationId: this.config.bandwidth.applicationId,
         };
 
         const options = {
             uri: url,
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
             auth: {
                 user: this.config.bandwidth.authUsername,
-                password: this.config.bandwidth.authPassword
+                pass: this.config.bandwidth.authPassword
             },
             json: body
         };

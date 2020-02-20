@@ -33,23 +33,23 @@ class EmailHelper {
         sgMail.setApiKey(this.config.email.sendGridApiKey);
     }
 
-    async sendEmail(message) {
+    async sendEmail(message, toEmailAddress) {
         if (this.config.email.method === 'smtp') {
-            await this.sendSMTPEmail(message);
+            await this.sendSMTPEmail(message, toEmailAddress);
         } else if (this.config.email.method === 'sendgrid') {
-            await this.sendSendGridEmail(message);
+            await this.sendSendGridEmail(message, toEmailAddress);
         } else {
             this.logger.error(`invalid email method "${this.config.email.method}", must be either "smtp" or "sendgrid"`);
             this.logger.error('unable to send email');
         }
     }
 
-    async sendSendGridEmail(message) {
+    async sendSendGridEmail(message, toEmailAddress) {
         const template = await this.loadTemplate();
         const formattedTemplate = await this.formatHtml(template, message);
 
         const msg = {
-            to: message.notificationEmail,
+            to: toEmailAddress,
             from: this.config.email.sender,
             subject: `New message from ${phoneFormatter.format(message.from, this.config.phoneNumberFormat)}`,
             text: message.contents,
@@ -80,14 +80,14 @@ class EmailHelper {
         await sgMail.send(msg);
     }
 
-    async sendSMTPEmail(message) {
+    async sendSMTPEmail(message, toEmailAddress) {
         return new Promise(async (resolve, reject) => {
             const template = await this.loadTemplate();
             const formattedTemplate = await this.formatHtml(template, message);
 
             let mailOptions = {
                 from: this.config.email.sender,
-                to: message.notificationEmail,
+                to: toEmailAddress,
                 subject: `New message from ${phoneFormatter.format(message.from, this.config.phoneNumberFormat)}`,
                 text: message.contents,
                 html: formattedTemplate

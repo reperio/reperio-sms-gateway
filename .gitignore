@@ -38,4 +38,8 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
+# MacOS DS_Store
 .DS_Store
+
+# VS code configurations
+.vscode

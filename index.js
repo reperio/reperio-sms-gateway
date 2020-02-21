@@ -84,6 +84,9 @@ const start = async () => {
                 if (response.isBoom && response.output.statusCode !== 200) {
                     request.app.logger.error('Unhandled Error');
                     request.app.logger.error(response);
+                } else {
+                    request.app.logger.debug(`${response.statusCode} response`);
+                    request.app.logger.debug({...response, request: 'circular'});
                 }
                 return h.continue;
             }

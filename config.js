@@ -14,6 +14,7 @@ module.exports = {
         smtpUser: process.env.SMS_SMTP_USER || '',
         smtpPassword: process.env.SMS_SMTP_USER_PASSWORD || '',
         sender: process.env.SMS_EMAIL_SENDER || 'do-not-reply@reper.io',
+        errorEmailRecipient: process.env.SMS_ERROR_EMAIL_RECIPIENT || '',
         sendGridApiKey: process.env.SMS_SENDGRID_API_KEY || '',
         method: process.env.SMS_EMAIL_METHOD || 'smtp', // must be either 'smtp' or 'sendgrid',
         rejectUnauthorizedTLS: process.env.SMS_SMTP_REJECT_UNAUTHORIZED_TLS || true

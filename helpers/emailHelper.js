@@ -175,6 +175,92 @@ class EmailHelper {
     async getImageText(media) {
         return media.isImage ? `<img style="max-width: 100%; margin-left: auto; margin-right: auto;" src="cid:${media.fileName}" alt="${media.fileName}" />\n` : '';
     }
+
+    async sendJsonErrorEmail(payload) {
+        if (this.config.email.method === 'smtp') {
+            await this.sendJsonErrorSMTPEmail(payload);
+        } else if (this.config.email.method === 'sendgrid') {
+            await this.sendJsonErrorSendGridEmail(payload);
+        } else {
+            this.logger.error(`invalid email method "${this.config.email.method}", must be either "smtp" or "sendgrid"`);
+            this.logger.error('unable to send email');
+        }
+    }
+
+    async sendJsonErrorSendGridEmail(payload) {
+        const template = await this.loadJsonErrorTemplate();
+        const formattedTemplate = await this.formatJsonErrorHtml(template, payload);
+
+        const msg = {
+            to: this.config.email.errorEmailRecipient,
+            from: this.config.email.sender,
+            subject: `Message Failed from Bandwidth API`,
+            text: JSON.stringify(payload, null, '&nbsp;'),
+            html: formattedTemplate
+        };
+
+        this.logger.debug(msg);
+
+        await sgMail.send(msg);
+    }
+
+    async sendJsonErrorSMTPEmail(payload) {
+        return new Promise(async (resolve, reject) => {
+            const template = await this.loadJsonErrorTemplate();
+            const formattedTemplate = await this.formatJsonErrorHtml(template, payload);
+
+            let mailOptions = {
+                from: this.config.email.sender,
+                to: this.config.email.errorEmailRecipient,
+                subject: `Message Failed from Bandwidth API`,
+                text: JSON.stringify(payload, null, '&nbsp;'),
+                html: formattedTemplate
+            };
+        
+            this.logger.debug(mailOptions);
+    
+            // send mail with defined transport object
+            this.transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    this.logger.error(error);
+                    this.logger.error(info);
+                    reject(error);
+                } else {
+                    this.logger.debug(info);
+                    resolve();
+                }
+            });
+        });
+    }
+
+    // read the email template from the file
+    async loadJsonErrorTemplate() {
+        return new Promise((resolve, reject) => {
+            fs.readFile(path.join('templates', 'jsonErrorEmail.html'), (err, data) => {
+                if (err) {
+                    reject(err);
+                }
+
+                resolve('' + data);
+            });
+        });
+    }
+
+    async formatJsonErrorHtml(template, payload) {
+        try {
+            this.logger.info('formatting json error email template html');
+        
+            let newTemplate = template.replace('{{host}}', this.config.server.url);
+            newTemplate = newTemplate.replace('{{payload}}', JSON.stringify(payload, null, 2));
+
+            this.logger.info('email formatted');
+            return newTemplate;
+        } catch (err) {
+            this.logger.error('failed to format template');
+            this.logger.error(err);
+            throw err;
+        }
+    }
 }
 
 module.exports = EmailHelper;

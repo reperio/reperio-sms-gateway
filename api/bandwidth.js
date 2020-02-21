@@ -70,6 +70,18 @@ const handlers = {
     },
     v1BandwidthIncoming: async (request, h) => {
         const logger = request.app.logger;
+        logger.info('recieved Bandwidth incoming request');
+        try {
+            if (Array.isArray(request.payload)) {
+                logger.debug('bandwidth incoming request in v2 format');
+                return await bandwidthHandler(request, h);
+            }
+        } catch (err) {
+            logger.error('Failed to process v2 request from bandwidth')
+            logger.error(err);
+            return ''; // always return 200
+        }
+        
         try {
             logger.info('recieved Bandwidth incoming SMS');
             logger.debug(request.payload);
@@ -136,23 +148,47 @@ const routes = [
         config: {
             auth: false,
             validate: {
-                payload: {
-                    eventType: Joi.string(),
-                    direction: Joi.string(),
-                    from: Joi.string(),
-                    to: Joi.string(),
-                    messageId: Joi.string(),
-                    messageUri: Joi.string(),
-                    text: Joi.string(),
-                    applicationId: Joi.string(),
-                    time: Joi.date(),
-                    state: Joi.string(),
-                    segmentCount: Joi.number().optional(),
-                    deliveryState: Joi.string().optional().allow('').allow(null),
-                    deliveryCode: Joi.string().optional().allow('').allow(null),
-                    deliveryDescription: Joi.string().optional().allow('').allow(null),
-                    media: Joi.array().items(Joi.string()).optional()
-                }
+                payload: [
+                    // v1 payload
+                    Joi.object({
+                        eventType: Joi.string(),
+                        direction: Joi.string(),
+                        from: Joi.string(),
+                        to: Joi.string(),
+                        messageId: Joi.string(),
+                        messageUri: Joi.string(),
+                        text: Joi.string(),
+                        applicationId: Joi.string(),
+                        time: Joi.date(),
+                        state: Joi.string(),
+                        segmentCount: Joi.number().optional(),
+                        deliveryState: Joi.string().optional().allow('').allow(null),
+                        deliveryCode: Joi.string().optional().allow('').allow(null),
+                        deliveryDescription: Joi.string().optional().allow('').allow(null),
+                        media: Joi.array().items(Joi.string()).optional()
+                    }),
+                    // v2 payload (for bandwidth sending to incorrect endpoint)
+                    Joi.array().items(Joi.object({
+                        type: Joi.string().required(),
+                        time: Joi.date().required(),
+                        description: Joi.string().required(),
+                        to: Joi.string().required(),
+                        errorCode: Joi.number().optional(),
+                        message: Joi.object({
+                            id: Joi.string().required(),
+                            time: Joi.date().required(),
+                            to: [Joi.string(), Joi.array().items(Joi.string())],
+                            from: Joi.string().required(),
+                            text: Joi.string().optional().allow(''),
+                            tag: Joi.string().optional().allow(''),
+                            applicationId: Joi.string().required(),
+                            media: Joi.array().items(Joi.string()).optional(),
+                            owner: Joi.string().required(),
+                            direction: Joi.string().required(),
+                            segmentCount: Joi.number().required(),
+                        }).required(),
+                    })).required()
+                ]
             }
         },
         handler: handlers.v1BandwidthIncoming

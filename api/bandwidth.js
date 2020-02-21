@@ -1,9 +1,13 @@
 const Joi = require('joi');
+const EmailHelper = require('../helpers/emailHelper');
+const config = require('../config');
 
 const bandwidthHandler = async (request, h) => {
     const type = request.payload[0].type;
-    if (type === 'messsage-received') {
+    if (type === 'message-received') {
         return await handlers.bandwidthIncoming(request, h);
+    } else if (type === 'message-failed') {
+        return await handlers.bandwidthOutgoingError(request, h);
     } else {
         return await handlers.bandwidthOutgoing(request, h);
     }
@@ -48,6 +52,19 @@ const handlers = {
 
         logger.setRequestId(requestId);
         logger.info(`Recieved Bandwidth outgoing SMS receipt: ${JSON.stringify(messageDetails)}`);
+
+        return '';
+    },
+    bandwidthOutgoingError: async (request, h) => {
+        const logger = request.app.logger;
+        const payload = request.payload;
+        const requestId = request.params.requestId || request.info.id;
+
+        logger.setRequestId(requestId);
+        logger.info(`Recieved Bandwidth outgoing SMS receipt error: ${JSON.stringify(payload)}`);
+
+        const emailHelper = new EmailHelper(logger, config);
+        await emailHelper.sendJsonErrorEmail(payload);
 
         return '';
     },
@@ -101,6 +118,7 @@ const routes = [
                         to: [Joi.string(), Joi.array().items(Joi.string())],
                         from: Joi.string().required(),
                         text: Joi.string().optional().allow(''),
+                        tag: Joi.string().optional().allow(''),
                         applicationId: Joi.string().required(),
                         media: Joi.array().items(Joi.string()).optional(),
                         owner: Joi.string().required(),
@@ -110,7 +128,7 @@ const routes = [
                 })).required(),
             }
         },
-        handler: handlers.bandwidthIncoming
+        handler: bandwidthHandler
     },
     {
         method: 'POST',

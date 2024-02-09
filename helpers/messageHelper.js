@@ -58,7 +58,7 @@ class MessageHelper {
                 }
             }
         } else {
-            const userAndAccount = await kazooHelper.getUserByPhoneNumber(message.to[0]);
+            const userAndAccount = await kazooHelper.getUserByPhoneNumber(message.to);
             this.logger.debug(userAndAccount);
 
             if (userAndAccount === null) {
@@ -109,10 +109,10 @@ class MessageHelper {
         }
 
         // send notification email
-        if (message.notificationEmail === null && !message.notificationEmails.length) {
+        if (message.notificationEmail === null && !Array.isArray(message.notificationEmails)) {
             this.logger.warn('could not find an email address, skipping notification email');
         } else {
-            if (message.notificationEmails.length) {
+            if (Array.isArray(message.notificationEmails)) {
                 for (const email of message.notificationEmails) {
                     this.logger.info('sending notification email');
                     await emailHelper.sendEmail(message, email);

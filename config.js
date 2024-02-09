@@ -6,7 +6,7 @@ module.exports = {
     cnam: {
         enabled: process.env.SMS_CNAM_ENABLED === 'true' ? true : false,
         telnyxApiToken: process.env.SMS_TELNYX_API_TOKEN || '',
-        telnyxUrl: process.env.SMS_TELNYX_CNAM_URL || 'https://data.telnyx.com'
+        telnyxUrl: process.env.SMS_TELNYX_CNAM_URL || 'https://api.telnyx.com'
     },
     email: {
         smtpHost: process.env.SMS_SMTP_HOST || 'localhost',

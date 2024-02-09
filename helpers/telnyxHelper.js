@@ -33,18 +33,20 @@ class TelnyxHelper {
     async getCNAMRecord(phoneNumber) {
         try {
             this.logger.info(`fetching CNAM record for ${phoneNumber}`);
-            const url = `${this.config.cnam.telnyxUrl}/cnam/v1/caller-information?tn=${phoneNumber}`;
+            const url = `${this.config.cnam.telnyxUrl}/v2/number_lookup/${phoneNumber}?type=caller-name`;
             const options = {
                 uri: url,
                 method: 'GET',
                 headers: {
-                    Authorization: `Token ${this.config.cnam.telnyxApiToken}`
+                    "Authorization": `Bearer ${this.config.cnam.telnyxApiToken}`,
+                    "Content-Type": 'application/json',
+                    "Accept": 'application/json'
                 }
             };
 
             this.logger.debug(options);
             const result = JSON.parse(await request(options));
-            return result.callerInformation;
+            return result.data.caller_name.caller_name;
         } catch (err) {
             this.logger.warn(`failed to fetch CNAM record for ${phoneNumber}`);
             this.logger.warn(err);

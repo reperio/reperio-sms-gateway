@@ -86,7 +86,7 @@ class KazooHelper {
 
     // get callflows for an account from kazoo
     async getCallFlowsByAccountId(accountId) {
-        const url = `${this.config.kazoo.url}/v2/accounts/${accountId}/callflows`;
+        const url = `${this.config.kazoo.url}/v2/accounts/${accountId}/callflows?page_size=9999`;
         const options = {
             uri: url,
             method: 'GET',
